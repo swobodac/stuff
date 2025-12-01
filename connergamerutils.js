@@ -128,11 +128,34 @@
                             "defaultValue": 2
                         }
                     }
+                }, {
+                    "opcode": "block_b55988a7a0a88e8b",
+                    "text": "Object Centering Math, Object Amount [26aebb6378b15dff] Object Distance [e3e6927eabb55526] Object ID [8c33068a2cb70acf]",
+                    "blockType": "reporter",
+                    "arguments": {
+                        "26aebb6378b15dff": {
+                            "type": "number",
+                            "defaultValue": 7
+                        },
+                        "e3e6927eabb55526": {
+                            "type": "number",
+                            "defaultValue": 65
+                        },
+                        "8c33068a2cb70acf": {
+                            "type": "number",
+                            "defaultValue": 1
+                        }
+                    }
+                }, {
+                    "opcode": "block_2a796064978379ad",
+                    "text": "Distance Set on Object, Object Amount",
+                    "blockType": "command",
+                    "arguments": {}
                 }]
             }
         }
         async block_f35242c85dedabdb(args) {
-            ExtForge.Variables.set("radius thingy", ((2) * ((3.141592653589793) * (20))))
+            ExtForge.Variables.set("radius thingy", ((2) * (Math.PI * (20))))
             if ((args["25bd28a11d56f6d8"] == ("1"))) {
                 return (String.prototype.concat(String("<svg viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"30\" cy=\"30\" r=\"20\" fill=\"none\" stroke=\""), String.prototype.concat(args["465e5f3eac21d7f6"], String.prototype.concat(String("\" stroke-width=\"5\"/><circle cx=\"30\" cy=\"30\" r=\"20\" fill=\"none\" stroke=\""), String.prototype.concat(args["efe5e5d7b65423a7"], String.prototype.concat(String("\" stroke-width=\"5\"/><circle cx=\"30\" cy=\"30\" r=\"20\" fill=\"none\" stroke=\""), String.prototype.concat(args["465e5f3eac21d7f6"], String.prototype.concat(String("\" stroke-width=\"5\" stroke-dasharray=\"125.66370614359172\" stroke-dashoffset=\""), String.prototype.concat(Scratch.Cast.toString((ExtForge.Variables.get("radius thingy") -
                     ((args["6d84d8c789dcf405"] / (100)) * ExtForge.Variables.get("radius thingy")))), String("\" transform=\"rotate(-90 30 30)\"/></svg>"))))))))))
@@ -147,6 +170,10 @@
         async block_65033c2e911bf1b2(args) {
             return ((args["f8a3eff0fa75b157"] + ((args["4eb811af31944866"] - (1)) * (2))))
         }
+        async block_b55988a7a0a88e8b(args) {
+            return (((args["e3e6927eabb55526"] * ((0.5) - ((0.5) * args["26aebb6378b15dff"]))) + (args["e3e6927eabb55526"] * (args["8c33068a2cb70acf"] - (1)))))
+        }
+        async block_2a796064978379ad(args) {}
     }
 
     let extension = new Extension();
