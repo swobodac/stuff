@@ -145,7 +145,7 @@
             return (String.prototype.concat(args["789e0bbae97ea983"], String.prototype.concat(String("Loop"), Scratch.Cast.toString(args["f5bfc71ba7914c4f"]))))
         }
         async block_65033c2e911bf1b2(args) {
-            return (((args["f8a3eff0fa75b157"] + (args["4eb811af31944866"] - (1))) * (2)))
+            return ((args["f8a3eff0fa75b157"] + ((args["4eb811af31944866"] - (1)) * (2))))
         }
     }
 
