@@ -314,7 +314,7 @@
         opcode: `distanceonobjectset`,
         blockType: Scratch.BlockType.BOOLEAN,
         hideFromPalette: false,
-        text: `Distance on Object is set, Object Amount: [amount] Object Distance: [distance] X Position: [xpos]`,
+        text: `Distance on Object is set by mouse x, Object Amount: [amount] Object Distance: [distance] X Position: [xpos]`,
         filter: [Scratch.TargetType.SPRITE],
         arguments: {
             "amount": {
