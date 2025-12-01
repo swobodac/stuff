@@ -148,16 +148,30 @@
                     }
                 }, {
                     "opcode": "block_2a796064978379ad",
-                    "text": "Check the amount of times something appears, Key Value: [144fea0ec3dd0da6] Base Test: [cf2d534140775312]",
-                    "blockType": "command",
+                    "text": "Check if the Mouse X Distance On Object is Set, X Position: [6afb6140bef85e51] Object Amount: [d4e9aed6d08340bd] Object Distance: [c7484c39e6969f76]",
+                    "blockType": "Boolean",
                     "arguments": {
-                        "144fea0ec3dd0da6": {
-                            "type": "string",
-                            "defaultValue": "p"
+                        "6afb6140bef85e51": {
+                            "type": "number",
+                            "defaultValue": 0
                         },
-                        "cf2d534140775312": {
-                            "type": "string",
-                            "defaultValue": "Apple"
+                        "d4e9aed6d08340bd": {
+                            "type": "number",
+                            "defaultValue": 7
+                        },
+                        "c7484c39e6969f76": {
+                            "type": "number",
+                            "defaultValue": 65
+                        }
+                    }
+                }, {
+                    "opcode": "block_86dc1e0d8d458fe0",
+                    "text": "Calculate Loop Time, BPM: [a1244500d3871998]",
+                    "blockType": "reporter",
+                    "arguments": {
+                        "a1244500d3871998": {
+                            "type": "number",
+                            "defaultValue": 120
                         }
                     }
                 }]
@@ -183,7 +197,10 @@
             return (((args["e3e6927eabb55526"] * ((0.5) - ((0.5) * args["26aebb6378b15dff"]))) + (args["e3e6927eabb55526"] * (args["8c33068a2cb70acf"] - (1)))))
         }
         async block_2a796064978379ad(args) {
-            return (ExtForge.Utils.countString(args["cf2d534140775312"], args["144fea0ec3dd0da6"]))
+            return (((Scratch.vm.runtime.ioDevices.mouse.getScratchX() > (args["6afb6140bef85e51"] - (args["c7484c39e6969f76"] / (args["d4e9aed6d08340bd"] * (0.256))))) && (Scratch.vm.runtime.ioDevices.mouse.getScratchX() < (args["6afb6140bef85e51"] + (args["c7484c39e6969f76"] / (args["d4e9aed6d08340bd"] * (0.256)))))))
+        }
+        async block_86dc1e0d8d458fe0(args) {
+            return ((((960) / args["a1244500d3871998"]) / (1.0006)))
         }
     }
 
