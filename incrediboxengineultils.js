@@ -212,6 +212,72 @@
     };
 
     blocks.push({
+        opcode: `arraypiecedatagen`,
+        blockType: Scratch.BlockType.REPORTER,
+        hideFromPalette: false,
+        text: `Create Polo Piece Data as an Array, Piece Name: [name] Piece X Offest: [x] Piece Y Offset: [y]  Piece Direction Offset: [direction] Piece Size Offset: [size]`,
+        arguments: {
+            "name": {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'Head',
+            },
+            "x": {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+            },
+            "y": {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+            },
+            "direction": {
+                type: Scratch.ArgumentType.ANGLE,
+                defaultValue: 0,
+            },
+            "size": {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: '0',
+            },
+        },
+        disableMonitor: false
+    });
+    Extension.prototype[`arraypiecedatagen`] = async (args, util) => {
+        return '["' + args["name"] + '","' + args["x"] + '","' + args["y"] + '","' + args["direction"] + '","' + args["size"] + '"]'
+    };
+
+    blocks.push({
+        opcode: `jsonpiecedatagen`,
+        blockType: Scratch.BlockType.REPORTER,
+        hideFromPalette: false,
+        text: `Create Polo Piece Data as JSON/Objects, Piece Name: [name] Piece X Offest: [x] Piece Y Offset: [y]  Piece Direction Offset: [direction] Piece Size Offset: [size]`,
+        arguments: {
+            "name": {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'Head',
+            },
+            "x": {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+            },
+            "y": {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+            },
+            "direction": {
+                type: Scratch.ArgumentType.ANGLE,
+                defaultValue: 90,
+            },
+            "size": {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: '0',
+            },
+        },
+        disableMonitor: false
+    });
+    Extension.prototype[`jsonpiecedatagen`] = async (args, util) => {
+        return '{"PieceName":"' + args["name"] + '","PieceXOffset":' + args["x"] + ',"PieceYOffset":' + args["y"] + ',"PieceDirectionOffset":' + args["direction"] + ',"PieceSizeOffset":' + args["size"] + '}'
+    };
+
+    blocks.push({
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
         text: `Math Calculators & Detectors`,
