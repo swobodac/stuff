@@ -346,7 +346,7 @@
         disableMonitor: false
     });
     Extension.prototype[`calculatebpm`] = async (args, util) => {
-        return ((960 / args["bpm"]) / 1.006)
+        return (Math.floor((((60 / args["bpm"]) * 16) * 20)) / 20)
     };
 
     blocks.push({
@@ -371,7 +371,7 @@
     };
 
     blocks.push({
-        opcode: `bpmsidechainingcalculation`,
+        opcode: `sidechainingcalculation`,
         blockType: Scratch.BlockType.REPORTER,
         hideFromPalette: false,
         text: `Audio Sidechaining Calculations via Loop Time, Current Audio Time: [time] Loop Time: [looptime] Additional Time: [addedtime]`,
@@ -391,7 +391,7 @@
         },
         disableMonitor: false
     });
-    Extension.prototype[`bpmsidechainingcalculation`] = async (args, util) => {
+    Extension.prototype[`sidechainingcalculation`] = async (args, util) => {
         return (((args["time"] + args["addedtime"]) / (args["looptime"] / 16)) % 1)
     };
 
