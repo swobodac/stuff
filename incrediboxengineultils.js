@@ -219,7 +219,7 @@
         arguments: {
             "name": {
                 type: Scratch.ArgumentType.STRING,
-                defaultValue: 'Head',
+                defaultValue: 'Array Head',
             },
             "x": {
                 type: Scratch.ArgumentType.NUMBER,
@@ -252,7 +252,7 @@
         arguments: {
             "name": {
                 type: Scratch.ArgumentType.STRING,
-                defaultValue: 'Head',
+                defaultValue: 'JSON Body',
             },
             "x": {
                 type: Scratch.ArgumentType.NUMBER,
@@ -314,7 +314,7 @@
         opcode: `distanceonobjectset`,
         blockType: Scratch.BlockType.BOOLEAN,
         hideFromPalette: false,
-        text: `Distance on Object is set by mouse x, Object Amount: [amount] Object Distance: [distance] X Position: [xpos]`,
+        text: `Distance on Object is set by mouse x, Object Amount: [amount] Object Distance: [distance]`,
         filter: [Scratch.TargetType.SPRITE],
         arguments: {
             "amount": {
@@ -325,15 +325,11 @@
                 type: Scratch.ArgumentType.NUMBER,
                 defaultValue: 65,
             },
-            "xpos": {
-                type: Scratch.ArgumentType.NUMBER,
-                defaultValue: 0,
-            },
         },
         disableMonitor: false
     });
     Extension.prototype[`distanceonobjectset`] = async (args, util) => {
-        return ((Scratch.vm.runtime.ioDevices.mouse.getScratchX() > (args["xpos"] - (args["distance"] / (args["amount"] * 0.256)))) && (Scratch.vm.runtime.ioDevices.mouse.getScratchX() < (args["xpos"] + (args["distance"] / (args["amount"] * 0.256)))))
+        return ((Scratch.vm.runtime.ioDevices.mouse.getScratchX() > ((util.target !== undefined ? util.target.x : 0) - (args["distance"] / (args["amount"] * 0.256)))) && (Scratch.vm.runtime.ioDevices.mouse.getScratchX() < ((util.target !== undefined ? util.target.x : 0) + (args["distance"] / (args["amount"] * 0.256)))))
     };
 
     blocks.push({
@@ -351,6 +347,27 @@
     });
     Extension.prototype[`calculatebpm`] = async (args, util) => {
         return ((960 / args["bpm"]) / 1.006)
+    };
+
+    blocks.push({
+        opcode: `idplusphase`,
+        blockType: Scratch.BlockType.REPORTER,
+        hideFromPalette: false,
+        text: `Loop ID + Phase, Loop ID: [loop] Phase: [phase]`,
+        arguments: {
+            "loop": {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 1,
+            },
+            "phase": {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 2,
+            },
+        },
+        disableMonitor: false
+    });
+    Extension.prototype[`idplusphase`] = async (args, util) => {
+        return (args["loop"] + ((args["phase"] - 1) * 2))
     };
 
     blocks.push({
@@ -407,7 +424,8 @@
         disableMonitor: false
     });
     Extension.prototype[`id`] = async (args, util) => {
-        return '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="20" fill="none" stroke="' + args["color1"] + '" stroke-width="5"/><circle cx="30" cy="30" r="20" fill="none" stroke="' + args["color1"] + '" stroke-width="5"/><circle cx="30" cy="30" r="20" fill="none" stroke="' + args["color2"] + '" stroke-width="5" stroke-dasharray="125.66370614359172" stroke-dashoffset="' + ((2 * (3.141592653589793 * 20)) - ((args["progress"] / 100) * (2 * (3.141592653589793 * 20)))) + '" transform="rotate(-90 30 30)"/></svg>'
+        variables['resetskindatamaththingy'] = (2 * (3.141592653589793 * 20))
+        return '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="20" fill="none" stroke="' + args["color1"] + '" stroke-width="5"/><circle cx="30" cy="30" r="20" fill="none" stroke="' + args["color1"] + '" stroke-width="5"/><circle cx="30" cy="30" r="20" fill="none" stroke="' + args["color2"] + '" stroke-width="5" stroke-dasharray="125.66370614359172" stroke-dashoffset="' + (variables['resetskindatamaththingy'] - ((args["progress"] / 100) * variables['resetskindatamaththingy'])) + '" transform="rotate(-90 30 30)"/></svg>'
     };
 
     blocks.push({
