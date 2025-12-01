@@ -174,6 +174,28 @@
                             "defaultValue": 120
                         }
                     }
+                }, {
+                    "opcode": "block_e55d2ca6b757b633",
+                    "text": "Check if something is set to a certain thing while another something is not set to something, 1st Value: [de6451c1750e1273] 1st Values's Value: [43da465d6af16a45] 2nd Value: [69e75c67f240afd0] 2nd Value's Value: [374aaa080303ae1e]",
+                    "blockType": "Boolean",
+                    "arguments": {
+                        "de6451c1750e1273": {
+                            "type": "string",
+                            "defaultValue": "Something"
+                        },
+                        "43da465d6af16a45": {
+                            "type": "string",
+                            "defaultValue": "Another Something"
+                        },
+                        "69e75c67f240afd0": {
+                            "type": "string",
+                            "defaultValue": "Something Again"
+                        },
+                        "374aaa080303ae1e": {
+                            "type": "string",
+                            "defaultValue": "Another Something Again"
+                        }
+                    }
                 }]
             }
         }
@@ -201,6 +223,9 @@
         }
         async block_86dc1e0d8d458fe0(args) {
             return ((((960) / args["a1244500d3871998"]) / (1.0006)))
+        }
+        async block_e55d2ca6b757b633(args) {
+            return ((!((args["de6451c1750e1273"] == args["43da465d6af16a45"]) && (!(args["69e75c67f240afd0"] == args["374aaa080303ae1e"])))))
         }
     }
 
