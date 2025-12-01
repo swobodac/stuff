@@ -148,9 +148,18 @@
                     }
                 }, {
                     "opcode": "block_2a796064978379ad",
-                    "text": "Distance Set on Object, Object Amount",
+                    "text": "Check the amount of times something appears, Key Value: [144fea0ec3dd0da6] Base Test: [cf2d534140775312]",
                     "blockType": "command",
-                    "arguments": {}
+                    "arguments": {
+                        "144fea0ec3dd0da6": {
+                            "type": "string",
+                            "defaultValue": "p"
+                        },
+                        "cf2d534140775312": {
+                            "type": "string",
+                            "defaultValue": "Apple"
+                        }
+                    }
                 }]
             }
         }
@@ -173,7 +182,9 @@
         async block_b55988a7a0a88e8b(args) {
             return (((args["e3e6927eabb55526"] * ((0.5) - ((0.5) * args["26aebb6378b15dff"]))) + (args["e3e6927eabb55526"] * (args["8c33068a2cb70acf"] - (1)))))
         }
-        async block_2a796064978379ad(args) {}
+        async block_2a796064978379ad(args) {
+            return (ExtForge.Utils.countString(args["cf2d534140775312"], args["144fea0ec3dd0da6"]))
+        }
     }
 
     let extension = new Extension();
