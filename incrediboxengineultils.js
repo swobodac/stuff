@@ -374,7 +374,7 @@
         opcode: `sidechainingcalculation`,
         blockType: Scratch.BlockType.REPORTER,
         hideFromPalette: false,
-        text: `Audio Sidechaining Calculations via Loop Time, Current Audio Time: [time] Loop Time: [looptime] Additional Time: [addedtime]`,
+        text: `Audio Sidechaining Calculations via Loop Time, Current Audio Time: [time] Loop Time: [looptime]`,
         arguments: {
             "time": {
                 type: Scratch.ArgumentType.NUMBER,
@@ -384,15 +384,11 @@
                 type: Scratch.ArgumentType.NUMBER,
                 defaultValue: 8,
             },
-            "addedtime": {
-                type: Scratch.ArgumentType.NUMBER,
-                defaultValue: 0,
-            },
         },
         disableMonitor: false
     });
     Extension.prototype[`sidechainingcalculation`] = async (args, util) => {
-        return (((args["time"] + args["addedtime"]) / (args["looptime"] / 16)) % 1)
+        return ((args["time"] / (args["looptime"] / 16)) % 1)
     };
 
     blocks.push({
