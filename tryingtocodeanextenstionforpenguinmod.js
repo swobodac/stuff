@@ -12,11 +12,11 @@
             blockType: Scratch.BlockType.COMMAND
           },
           {
-            opcode: 'hi',
-            text: 'say, hi',
+            opcode: 'testReporter',
+            text: 'testing!',
             blockType: Scratch.BlockType.REPORTER,
-            disableMonintor: true,
-            allowDropAnywhere: true
+            disableMonitor: true,
+	    allowDropAnywhere: true
           }
         ]
       };
@@ -25,8 +25,8 @@
     logToConsole() {
       console.log('Hello world!');
     }
-        hi() {
-      return "hi";
+    testReporter() {
+      return "Hello world!";
     }
   }
 
