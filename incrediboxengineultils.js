@@ -216,6 +216,7 @@
         blockType: Scratch.BlockType.REPORTER,
         hideFromPalette: false,
         text: `Create Polo Piece Data as an Array, Piece Name: [name] Piece X Offest: [x] Piece Y Offset: [y]  Piece Direction Offset: [direction] Piece Size Offset: [size]`,
+        filter: [Scratch.TargetType.SPRITE],
         arguments: {
             "name": {
                 type: Scratch.ArgumentType.STRING,
@@ -249,6 +250,7 @@
         blockType: Scratch.BlockType.REPORTER,
         hideFromPalette: false,
         text: `Create Polo Piece Data as JSON/Objects, Piece Name: [name] Piece X Offest: [x] Piece Y Offset: [y]  Piece Direction Offset: [direction] Piece Size Offset: [size]`,
+        filter: [Scratch.TargetType.SPRITE],
         arguments: {
             "name": {
                 type: Scratch.ArgumentType.STRING,
