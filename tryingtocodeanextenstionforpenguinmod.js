@@ -8,8 +8,11 @@
         blocks: [
           {
             opcode: 'logToConsole',
-            text: 'log to console',
+            text: 'log [TEXT] to console',
             blockType: Scratch.BlockType.COMMAND
+			  arguments: {
+		  TEXT:{}
+			  }
           },
           {
             opcode: 'testReporter',
