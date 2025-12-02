@@ -17,6 +17,12 @@
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: true,
 	    allowDropAnywhere: true
+          },
+			          {
+            opcode: 'random',
+            text: 'randomize true & false yay',
+            blockType: Scratch.BlockType.BOOLEAN,
+			disableMonitor: true
           }
         ]
       };
@@ -27,6 +33,9 @@
     }
     testReporter() {
       return "Hello world!";
+    }
+	      random() {
+      return Math.round(Math.random()) === 1;
     }
   }
 
