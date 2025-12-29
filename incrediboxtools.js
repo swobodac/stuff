@@ -29,8 +29,9 @@
         color2: '#666666',
         color3: '#555555',
         blocks: [
-          { blockType: Scratch.BlockType.LABEL, text: "I made this using Google Gemini" },
-          { blockType: Scratch.BlockType.LABEL, text: "since im not good at using javascript." },
+          // --- RESTORED CREDITS ---
+          { blockType: Scratch.BlockType.LABEL, text: "I made this using Google Gemini," },
+          { blockType: Scratch.BlockType.LABEL, text: "im not good at using javascript." },
           
           { blockType: Scratch.BlockType.LABEL, text: '--- Loop System ---' },
           { opcode: 'whenLoopStarted', blockType: Scratch.BlockType.HAT, text: 'when a loop has started' },
