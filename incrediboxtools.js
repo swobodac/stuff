@@ -1,5 +1,3 @@
-// I made this with gemini since i suck at js:sob:
-
 (function(Scratch) {
   'use strict';
 
@@ -29,7 +27,8 @@
         color2: '#666666',
         color3: '#555555',
         blocks: [
-          { blockType: Scratch.BlockType.LABEL, text: "Google Gemini - Incrediengine Master" },
+          { blockType: Scratch.BlockType.LABEL, text: "I made this using Google Gemini" },
+          { blockType: Scratch.BlockType.LABEL, text: "since im not good at using javascript." },
           
           { blockType: Scratch.BlockType.LABEL, text: '--- Loop System ---' },
           { opcode: 'whenLoopStarted', blockType: Scratch.BlockType.HAT, text: 'when a loop has started' },
@@ -59,7 +58,7 @@
           { opcode: 'isSpecificCharacterPlaced', blockType: Scratch.BlockType.BOOLEAN, text: 'is character [NAME] placed?', arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' } } },
           { opcode: 'getCharacterCount', blockType: Scratch.BlockType.REPORTER, text: 'total characters placed' },
 
-          { blockType: Scratch.BlockType.LABEL, text: '--- Polo Properties (Vector Support) ---' },
+          { blockType: Scratch.BlockType.LABEL, text: '--- Polo Properties ---' },
           { opcode: 'addPolo', blockType: Scratch.BlockType.COMMAND, text: 'add polo with id [ID]', arguments: { ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' } } },
           {
             opcode: 'setPoloProperty',
