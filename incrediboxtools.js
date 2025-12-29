@@ -1,3 +1,5 @@
+//i made this using google gemini since im not great a js, please dont kill me for this:sob:
+
 (function(Scratch) {
   'use strict';
 
