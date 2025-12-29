@@ -5,14 +5,16 @@
 
   class IncrediboxEngine {
     constructor() {
+      // Internal state management
       this.currentLoopData = ""; 
       this.polos = {}; 
-      this.characters = []; 
+      this.currentSolo = "none";
       
       if (Scratch.vm) {
         Scratch.vm.runtime.on('PROJECT_STOP_ALL', () => {
           this.currentLoopData = "";
           this.polos = {};
+          this.currentSolo = "none";
         });
       }
     }
@@ -20,11 +22,12 @@
     getInfo() {
       return {
         id: 'incrediboxEngine',
-        name: 'Incredibox Engine',
+        name: 'Incrediengine Tools',
         color1: '#7A7A7A',
         color2: '#666666',
         color3: '#555555',
         blocks: [
+          // Credits Labels
           {
             blockType: Scratch.BlockType.LABEL,
             text: "I made this using Google Gemini,"
@@ -65,25 +68,20 @@
 
           {
             blockType: Scratch.BlockType.LABEL,
-            text: 'Character Events'
+            text: 'Polo Solo & Mute'
           },
           {
-            opcode: 'whenCharacterPlaced',
-            blockType: Scratch.BlockType.HAT,
-            text: 'when character [NAME] is placed',
-            isEdgeActivated: false,
+            opcode: 'soloPolo',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'solo polo [ID]',
             arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' }
+              ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' }
             }
           },
           {
-            opcode: 'whenCharacterRemoved',
-            blockType: Scratch.BlockType.HAT,
-            text: 'when character [NAME] is removed',
-            isEdgeActivated: false,
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' }
-            }
+            opcode: 'getCurrentSolo',
+            blockType: Scratch.BlockType.REPORTER,
+            text: 'currently soloed polo'
           },
 
           {
@@ -152,14 +150,6 @@
               NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' },
               POLO_ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' }
             }
-          },
-          {
-            opcode: 'removeCharacterByName',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'remove character [NAME] from a polo',
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' }
-            }
           }
         ],
         menus: {
@@ -171,12 +161,23 @@
       };
     }
 
-    // --- Hat Blocks ---
-    whenLoopStarted() { return false; }
-    whenCharacterPlaced(args) { return false; }
-    whenCharacterRemoved(args) { return false; }
-
     // --- Logic ---
+    soloPolo(args) {
+      const targetId = String(args.ID);
+      this.currentSolo = targetId;
+
+      for (const id in this.polos) {
+        // Mute everyone else, unmute the solo target
+        this.polos[id].muted = (id !== targetId);
+      }
+    }
+
+    getCurrentSolo() {
+      return this.currentSolo;
+    }
+
+    whenLoopStarted() { return false; }
+
     generateLoopData(args) {
       return JSON.stringify({
         bpm: Number(args.BPM) || 120,
@@ -205,27 +206,9 @@
       }
     }
 
-    placeCharacter(args, util) {
+    placeCharacter(args) {
       const id = String(args.POLO_ID);
-      const name = args.NAME;
-      if (this.polos[id]) {
-        this.polos[id].character = name;
-        if (util && util.startHats) {
-          util.startHats('incrediboxEngine_whenCharacterPlaced', { NAME: name });
-        }
-      }
-    }
-
-    removeCharacterByName(args, util) {
-      const name = args.NAME;
-      for (const id in this.polos) {
-        if (this.polos[id].character === name) {
-          this.polos[id].character = null;
-          if (util && util.startHats) {
-            util.startHats('incrediboxEngine_whenCharacterRemoved', { NAME: name });
-          }
-        }
-      }
+      if (this.polos[id]) this.polos[id].character = args.NAME;
     }
 
     setPoloProperty(args) {
@@ -233,7 +216,13 @@
       if (this.polos[id]) {
         let val = args.VALUE;
         if (args.PROP === 'volume' || args.PROP === 'position') val = Number(val);
-        if (args.PROP === 'muted') val = (val === 'true' || val === true);
+        if (args.PROP === 'muted') {
+          val = (val === 'true' || val === true);
+          // If manually unmuting a polo while another is soloed, clear the solo state
+          if (val === false && this.currentSolo !== "none" && id !== this.currentSolo) {
+            this.currentSolo = "none";
+          }
+        }
         this.polos[id][args.PROP] = val;
       }
     }
@@ -246,9 +235,7 @@
 
     setCustomProperty(args) {
       const id = String(args.ID);
-      if (this.polos[id]) {
-        this.polos[id].custom[args.PROP] = args.VALUE;
-      }
+      if (this.polos[id]) this.polos[id].custom[args.PROP] = args.VALUE;
     }
 
     getCustomProperty(args) {
