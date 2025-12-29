@@ -1,5 +1,4 @@
 // I made this with gemini since i suck at js:sob:
-
 (function(Scratch) {
   'use strict';
 
@@ -7,7 +6,7 @@
     constructor() {
       // Internal state management
       this.currentLoopData = ""; 
-      this.currentLoopId = "none"; // New state for Loop ID
+      this.currentLoopId = "none";
       this.polos = {}; 
       this.characters = []; 
       this.currentSolo = "none";
@@ -81,69 +80,10 @@
               DATA: { type: Scratch.ArgumentType.STRING, defaultValue: '' }
             }
           },
-          {
-            opcode: 'getLoopLength',
-            blockType: Scratch.BlockType.REPORTER,
-            text: 'get length of loop using data [DATA]',
-            arguments: {
-              DATA: { type: Scratch.ArgumentType.STRING, defaultValue: '' }
-            }
-          },
-          {
-            opcode: 'getCurrentLoopData',
-            blockType: Scratch.BlockType.REPORTER,
-            text: 'current loop data'
-          },
 
           {
             blockType: Scratch.BlockType.LABEL,
-            text: 'Character Events'
-          },
-          {
-            opcode: 'whenCharacterPlaced',
-            blockType: Scratch.BlockType.HAT,
-            text: 'when character [NAME] is placed',
-            isEdgeActivated: false,
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' }
-            }
-          },
-          {
-            opcode: 'whenCharacterRemoved',
-            blockType: Scratch.BlockType.HAT,
-            text: 'when character [NAME] is removed',
-            isEdgeActivated: false,
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' }
-            }
-          },
-
-          {
-            blockType: Scratch.BlockType.LABEL,
-            text: 'Polo Solo & Mute'
-          },
-          {
-            opcode: 'soloPolo',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'solo polo [ID]',
-            arguments: {
-              ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' }
-            }
-          },
-          {
-            opcode: 'getCurrentSolo',
-            blockType: Scratch.BlockType.REPORTER,
-            text: 'currently soloed polo'
-          },
-          {
-            opcode: 'stopAllLoops',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'stop all loops'
-          },
-
-          {
-            blockType: Scratch.BlockType.LABEL,
-            text: 'Polo Properties'
+            text: 'Polo Properties (Vector Support)'
           },
           {
             opcode: 'addPolo',
@@ -162,9 +102,9 @@
               PROP: {
                 type: Scratch.ArgumentType.STRING,
                 menu: 'poloProps',
-                defaultValue: 'volume'
+                defaultValue: 'position'
               },
-              VALUE: { type: Scratch.ArgumentType.STRING, defaultValue: '100' }
+              VALUE: { type: Scratch.ArgumentType.STRING, defaultValue: '0' }
             }
           },
           {
@@ -176,9 +116,27 @@
               PROP: {
                 type: Scratch.ArgumentType.STRING,
                 menu: 'poloProps',
-                defaultValue: 'volume'
+                defaultValue: 'position'
               }
             }
+          },
+          {
+            opcode: 'soloPolo',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'solo polo [ID]',
+            arguments: {
+              ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' }
+            }
+          },
+          {
+            opcode: 'getCurrentSolo',
+            blockType: Scratch.BlockType.REPORTER,
+            text: 'currently soloed polo'
+          },
+          
+          {
+            blockType: Scratch.BlockType.LABEL,
+            text: 'Custom Data & Characters'
           },
           {
             opcode: 'setCustomProperty',
@@ -219,7 +177,25 @@
 
           {
             blockType: Scratch.BlockType.LABEL,
-            text: 'Definitions & Categories'
+            text: 'Character Events & Definitions'
+          },
+          {
+            opcode: 'whenCharacterPlaced',
+            blockType: Scratch.BlockType.HAT,
+            text: 'when character [NAME] is placed',
+            isEdgeActivated: false,
+            arguments: {
+              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' }
+            }
+          },
+          {
+            opcode: 'whenCharacterRemoved',
+            blockType: Scratch.BlockType.HAT,
+            text: 'when character [NAME] is removed',
+            isEdgeActivated: false,
+            arguments: {
+              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' }
+            }
           },
           {
             opcode: 'addCharacter',
@@ -237,11 +213,6 @@
             arguments: {
               CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beats' }
             }
-          },
-          {
-            opcode: 'getCurrentCategories',
-            blockType: Scratch.BlockType.REPORTER,
-            text: 'current categories'
           }
         ],
         menus: {
@@ -253,21 +224,49 @@
       };
     }
 
-    // --- Loop ID Implementation ---
-    setLoopId(args) {
-      this.currentLoopId = String(args.ID);
+    // --- Vector & Logic Handling ---
+    setPoloProperty(args) {
+      const id = String(args.ID);
+      if (this.polos[id]) {
+        let val = args.VALUE;
+
+        // Vector Support: Check if the value is a Vector object or stringified JSON
+        if (typeof val === 'string' && val.startsWith('{')) {
+          try {
+            val = JSON.parse(val);
+          } catch (e) {
+            // Not a vector, keep as string
+          }
+        }
+
+        // Standard numeric conversion for non-vector props
+        if (args.PROP === 'volume' && typeof val !== 'object') val = Number(val);
+        if (args.PROP === 'muted') val = (val === 'true' || val === true);
+        
+        this.polos[id][args.PROP] = val;
+      }
     }
 
-    getLoopId() {
-      return this.currentLoopId;
+    getPoloProperty(args) {
+      const id = String(args.ID);
+      if (this.polos[id]) {
+        const val = this.polos[id][args.PROP];
+        // If it's a Vector object, return it as JSON so the Vector extension can read it
+        if (typeof val === 'object' && val !== null) {
+          return JSON.stringify(val);
+        }
+        return val;
+      }
+      return "";
     }
 
-    // --- Hat Blocks ---
+    // --- Existing Functionality ---
+    setLoopId(args) { this.currentLoopId = String(args.ID); }
+    getLoopId() { return this.currentLoopId; }
     whenLoopStarted() { return false; }
     whenCharacterPlaced(args) { return false; }
     whenCharacterRemoved(args) { return false; }
 
-    // --- Logic ---
     soloPolo(args) {
       const targetId = String(args.ID);
       this.currentSolo = targetId;
@@ -275,7 +274,6 @@
         this.polos[id].muted = (id !== targetId);
       }
     }
-
     getCurrentSolo() { return this.currentSolo; }
 
     generateLoopData(args) {
@@ -286,26 +284,11 @@
       });
     }
 
-    getLoopLength(args) {
-      try {
-        const data = JSON.parse(args.DATA);
-        return (data.bars * data.bpb) * (60 / data.bpm);
-      } catch (e) { return 0; }
-    }
-
-    getCurrentLoopData() { return this.currentLoopData; }
-
     playLoopWithData(args, util) {
       if (args.DATA && args.DATA.startsWith('{')) {
         this.currentLoopData = args.DATA;
         if (util && util.startHats) util.startHats('incrediboxEngine_whenLoopStarted');
       }
-    }
-
-    stopAllLoops() {
-      this.currentLoopData = "";
-      this.currentLoopId = "none";
-      this.currentSolo = "none";
     }
 
     addPolo(args) {
@@ -315,7 +298,7 @@
           character: null,
           volume: 100,
           muted: false,
-          position: 0,
+          position: 0, // Can now be a Vector object
           custom: {}
         };
       }
@@ -323,46 +306,19 @@
 
     placeCharacter(args, util) {
       const id = String(args.POLO_ID);
-      const name = args.NAME;
       if (this.polos[id]) {
-        this.polos[id].character = name;
-        if (util && util.startHats) {
-          util.startHats('incrediboxEngine_whenCharacterPlaced', { NAME: name });
-        }
+        this.polos[id].character = args.NAME;
+        if (util && util.startHats) util.startHats('incrediboxEngine_whenCharacterPlaced', { NAME: args.NAME });
       }
     }
 
     removeCharacterByName(args, util) {
-      const name = args.NAME;
       for (const id in this.polos) {
-        if (this.polos[id].character === name) {
+        if (this.polos[id].character === args.NAME) {
           this.polos[id].character = null;
-          if (util && util.startHats) {
-            util.startHats('incrediboxEngine_whenCharacterRemoved', { NAME: name });
-          }
+          if (util && util.startHats) util.startHats('incrediboxEngine_whenCharacterRemoved', { NAME: args.NAME });
         }
       }
-    }
-
-    setPoloProperty(args) {
-      const id = String(args.ID);
-      if (this.polos[id]) {
-        let val = args.VALUE;
-        if (args.PROP === 'volume' || args.PROP === 'position') val = Number(val);
-        if (args.PROP === 'muted') {
-          val = (val === 'true' || val === true);
-          if (val === false && this.currentSolo !== "none" && id !== this.currentSolo) {
-            this.currentSolo = "none";
-          }
-        }
-        this.polos[id][args.PROP] = val;
-      }
-    }
-
-    getPoloProperty(args) {
-      const id = String(args.ID);
-      if (this.polos[id]) return this.polos[id][args.PROP];
-      return "";
     }
 
     setCustomProperty(args) {
@@ -379,22 +335,13 @@
     }
 
     addCharacter(args) {
-      const exists = this.characters.some(c => c.name === args.NAME && c.category === args.CATEGORY);
-      if (!exists) {
+      if (!this.characters.some(c => c.name === args.NAME && c.category === args.CATEGORY)) {
         this.characters.push({ name: args.NAME, category: args.CATEGORY });
       }
     }
 
     getCharactersByCategory(args) {
-      const filtered = this.characters
-        .filter(c => c.category === args.CATEGORY)
-        .map(c => c.name);
-      return JSON.stringify(filtered);
-    }
-
-    getCurrentCategories() {
-      const categories = [...new Set(this.characters.map(c => c.category))];
-      return JSON.stringify(categories);
+      return JSON.stringify(this.characters.filter(c => c.category === args.CATEGORY).map(c => c.name));
     }
   }
 
