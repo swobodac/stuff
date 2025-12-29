@@ -48,16 +48,6 @@
             isEdgeActivated: false
           },
           {
-            opcode: 'generateLoopData',
-            blockType: Scratch.BlockType.REPORTER,
-            text: 'generate loop data using BPM: [BPM] bars: [BARS] beats per bar: [BPB]',
-            arguments: {
-              BPM: { type: Scratch.ArgumentType.NUMBER, defaultValue: 120 },
-              BARS: { type: Scratch.ArgumentType.NUMBER, defaultValue: 4 },
-              BPB: { type: Scratch.ArgumentType.NUMBER, defaultValue: 4 }
-            }
-          },
-          {
             opcode: 'setLoopId',
             blockType: Scratch.BlockType.COMMAND,
             text: 'set loop id to [ID]',
@@ -70,17 +60,41 @@
             blockType: Scratch.BlockType.REPORTER,
             text: 'current loop id'
           },
+          
           {
-            opcode: 'playLoopWithData',
+            blockType: Scratch.BlockType.LABEL,
+            text: 'Solo & Mute Controls'
+          },
+          {
+            opcode: 'soloPolo',
             blockType: Scratch.BlockType.COMMAND,
-            text: 'play loop with data [DATA]',
+            text: 'solo polo [ID]',
             arguments: {
-              DATA: { type: Scratch.ArgumentType.STRING, defaultValue: '' }
+              ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' }
             }
           },
           {
+            opcode: 'unsoloPolo',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'unsolo polo [ID]',
+            arguments: {
+              ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' }
+            }
+          },
+          {
+            opcode: 'unsoloAll',
+            blockType: Scratch.BlockType.COMMAND,
+            text: 'unsolo all polos'
+          },
+          {
+            opcode: 'getCurrentSolo',
+            blockType: Scratch.BlockType.REPORTER,
+            text: 'currently soloed polo'
+          },
+
+          {
             blockType: Scratch.BlockType.LABEL,
-            text: 'Polo Properties (Vector Support)'
+            text: 'Polo Properties'
           },
           {
             opcode: 'addPolo',
@@ -108,9 +122,7 @@
             opcode: 'getPoloProperty',
             blockType: Scratch.BlockType.REPORTER,
             text: 'get polo [ID] [PROP]',
-            // --- CRITICAL FIX FOR VECTOR BLOCKS ---
-            allowDropAnywhere: true, 
-            // --------------------------------------
+            allowDropAnywhere: true,
             arguments: {
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' },
               PROP: {
@@ -118,49 +130,6 @@
                 menu: 'poloProps',
                 defaultValue: 'position'
               }
-            }
-          },
-          {
-            opcode: 'soloPolo',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'solo polo [ID]',
-            arguments: {
-              ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' }
-            }
-          },
-          {
-            blockType: Scratch.BlockType.LABEL,
-            text: 'Custom Data & Characters'
-          },
-          {
-            opcode: 'setCustomProperty',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'set custom property [PROP] on polo [ID] to [VALUE]',
-            arguments: {
-              ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' },
-              PROP: { type: Scratch.ArgumentType.STRING, defaultValue: 'outfit' },
-              VALUE: { type: Scratch.ArgumentType.STRING, defaultValue: 'classic' }
-            }
-          },
-          {
-            opcode: 'getCustomProperty',
-            blockType: Scratch.BlockType.REPORTER,
-            text: 'get custom property [PROP] from polo [ID]',
-            // --- CRITICAL FIX FOR VECTOR BLOCKS ---
-            allowDropAnywhere: true,
-            // --------------------------------------
-            arguments: {
-              ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' },
-              PROP: { type: Scratch.ArgumentType.STRING, defaultValue: 'outfit' }
-            }
-          },
-          {
-            opcode: 'placeCharacter',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'place [NAME] on polo [POLO_ID]',
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'Beatboxer' },
-              POLO_ID: { type: Scratch.ArgumentType.STRING, defaultValue: '1' }
             }
           }
         ],
@@ -173,17 +142,50 @@
       };
     }
 
-    // --- Vector Logic ---
+    // --- Solo/Unsolo Logic ---
+    soloPolo(args) {
+      const targetId = String(args.ID);
+      this.currentSolo = targetId;
+      for (const id in this.polos) {
+        this.polos[id].muted = (id !== targetId);
+      }
+    }
+
+    unsoloPolo(args) {
+      const targetId = String(args.ID);
+      // Only trigger unsolo logic if this polo was actually the one soloed
+      if (this.currentSolo === targetId) {
+        this.unsoloAll();
+      }
+    }
+
+    unsoloAll() {
+      this.currentSolo = "none";
+      for (const id in this.polos) {
+        this.polos[id].muted = false;
+      }
+    }
+
+    getCurrentSolo() {
+      return this.currentSolo;
+    }
+
+    // --- Property Logic ---
     setPoloProperty(args) {
       const id = String(args.ID);
       if (this.polos[id]) {
         let val = args.VALUE;
-        // Handle incoming objects/vectors
         if (typeof val === 'string' && val.startsWith('{')) {
           try { val = JSON.parse(val); } catch (e) {}
         }
         if (args.PROP === 'volume' && typeof val !== 'object') val = Number(val);
-        if (args.PROP === 'muted') val = (val === 'true' || val === true);
+        if (args.PROP === 'muted') {
+          val = (val === 'true' || val === true);
+          // If manually unmuting a polo that wasn't soloed, we break the solo state
+          if (val === false && this.currentSolo !== "none" && id !== this.currentSolo) {
+            this.currentSolo = "none";
+          }
+        }
         this.polos[id][args.PROP] = val;
       }
     }
@@ -193,54 +195,19 @@
       return (this.polos[id]) ? this.polos[id][args.PROP] : "";
     }
 
-    setCustomProperty(args) {
-      const id = String(args.ID);
-      if (this.polos[id]) {
-        let val = args.VALUE;
-        if (typeof val === 'string' && val.startsWith('{')) {
-          try { val = JSON.parse(val); } catch (e) {}
-        }
-        this.polos[id].custom[args.PROP] = val;
-      }
-    }
-
-    getCustomProperty(args) {
-      const id = String(args.ID);
-      if (this.polos[id] && this.polos[id].custom[args.PROP] !== undefined) {
-        return this.polos[id].custom[args.PROP];
-      }
-      return "";
-    }
-
-    // --- Core Logic ---
-    setLoopId(args) { this.currentLoopId = String(args.ID); }
-    getLoopId() { return this.currentLoopId; }
-    whenLoopStarted() { return false; }
-    soloPolo(args) {
-      const targetId = String(args.ID);
-      this.currentSolo = targetId;
-      for (const id in this.polos) {
-        this.polos[id].muted = (id !== targetId);
-      }
-    }
-    generateLoopData(args) {
-      return JSON.stringify({ bpm: Number(args.BPM) || 120, bars: Number(args.BARS) || 4, bpb: Number(args.BPB) || 4 });
-    }
-    playLoopWithData(args, util) {
-      if (args.DATA && args.DATA.startsWith('{')) {
-        this.currentLoopData = args.DATA;
-        if (util && util.startHats) util.startHats('incrediboxEngine_whenLoopStarted');
-      }
-    }
     addPolo(args) {
       const id = String(args.ID);
       if (!this.polos[id]) {
         this.polos[id] = { character: null, volume: 100, muted: false, position: 0, custom: {} };
       }
     }
-    placeCharacter(args) {
-      const id = String(args.POLO_ID);
-      if (this.polos[id]) this.polos[id].character = args.NAME;
+
+    // --- Rest of Core Logic ---
+    setLoopId(args) { this.currentLoopId = String(args.ID); }
+    getLoopId() { return this.currentLoopId; }
+    whenLoopStarted() { return false; }
+    generateLoopData(args) {
+      return JSON.stringify({ bpm: Number(args.BPM) || 120, bars: Number(args.BARS) || 4, bpb: Number(args.BPB) || 4 });
     }
   }
 
