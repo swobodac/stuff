@@ -1,5 +1,4 @@
 // I made this with gemini since i suck at js:sob:
-
 (function(Scratch) {
   'use strict';
 
