@@ -80,6 +80,90 @@
         }
     }
           },
+          {
+                      opcode: 'uninterpolate',
+            text: 'uninterpolate [VAL] min [MIN] max [MAX]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        VAL: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 2,
+        },
+                MIN: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 1,
+        },
+                        MAX: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 3,
+        }
+    }
+          },
+    {
+            opcode: 'getleft',
+            text: 'get left from [WIDTH] while at x position [X]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        WIDTH: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 64,
+        },
+                X: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        }
+    }
+          },
+    {
+            opcode: 'getright',
+            text: 'get right from [WIDTH] while at x position [X]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        WIDTH: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 64,
+        },
+                X: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        }
+    }
+          },
+    {
+            opcode: 'gettop',
+            text: 'get top from [HEIGHT] while at y position [Y]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        HEIGHT: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 32,
+        },
+                Y: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        }
+    }
+          },
+    {
+            opcode: 'getbottom',
+            text: 'get bottom from [HEIGHT] while at y position [Y]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        HEIGHT: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 32,
+        },
+                Y: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        }
+    }
+          },
             {
             opcode: 'spriteName',
             text: 'get sprite name',
@@ -420,6 +504,7 @@
             const modalText = 
 `Penguinmod Team - Most Functions from base extenstions
 DinoBuilder Team - Some Functions
+Prismatic - Some Updated Math Functions & Uninterpolate block idea & functions.
 Draker - Some Block Ideas & SVG Timer Data (that i modified a tiny bit)
 Johnny - Radical SVG Timer idea.
 
@@ -539,7 +624,7 @@ return "false";
     }
     else
     {
-    return ((args["VAL"]) - (args["MININ"])) * ((args["MAXOUT"]) - (args["MINOUT"])) / ((args["MAXIN"]) - (args["MININ"])) + (args["MINOUT"])
+        return args["MINOUT"] + ((args["MAXOUT"] - args["MINOUT"]) * (args["VAL"] - args["MININ"]) / (args["MAXIN"] - args["MININ"]));
     }
     }
     clamp(args, util)
@@ -654,6 +739,31 @@ if (!sounds[index]) return "";
 
     const result = `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><circle cx="${centerpos}" cy="${centerpos}" r="${radius}" fill="none" stroke="${blankcolor}" stroke-width="${thickness}"/><circle cx="${centerpos}" cy="${centerpos}" r="${radius}" fill="none" stroke="${litcolor}" stroke-width="${thickness}" stroke-dasharray="${dasharray}" stroke-dashoffset="${dashoffset}" transform="rotate(-90 ${centerpos} ${centerpos})"/></svg>`;
 return result;
+    }
+    //thanks to prismatic for showing me how this works
+    uninterpolate(args)
+    {
+    const val = args["VAL"]
+    const min = args["MIN"]
+    const max = args["MAX"]
+
+    return (val - min) / (max - min);
+    }
+    getleft(args)
+    {
+    return (args["X"] - (args["WIDTH"] / 2)) + 4;
+    }
+        getright(args)
+    {
+    return (args["X"] + (args["WIDTH"] / 2)) - 4;
+    }
+        gettop(args)
+    {
+    return (args["Y"] + (args["HEIGHT"] / 2)) - 4;
+    }
+        getbottom(args)
+    {
+    return (args["Y"] - (args["HEIGHT"] / 2)) + 4;
     }
   }
 
