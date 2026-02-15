@@ -164,6 +164,18 @@
         }
     }
           },
+    {
+            opcode: 'newlinetoarray',
+            text: 'convert each new line in [TEXT] to an array',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        TEXT: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "",
+        }
+    }
+          },
             {
             opcode: 'spriteName',
             text: 'get sprite name',
@@ -246,7 +258,7 @@
                       {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
-        text: `Timesavers & Data`,
+        text: `Costume & Sound Data`,
     },
             {
             opcode: 'svgtimer',
@@ -321,6 +333,19 @@
         }
     }
           },
+                                              {
+            opcode: 'costumeexists',
+            text: 'does costume/backdrop [COSTUME] exist in this sprite?',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: true,
+            arguments: {
+        COSTUME: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "costume1",
+
+        }
+    }
+          },
                                 {
             opcode: 'checksvg',
             text: 'is [COSTUME] a vector',
@@ -366,17 +391,20 @@
         }
     }
           },
-               {
-            opcode: 'rawcostumedata',
-            text: 'get raw costume/backdrop data (Array & Objects)',
+                                {
+            opcode: 'getsounddata',
+            text: 'get [MENU] of [SOUND]',
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: true,
-          },
-                         {
-            opcode: 'rawsounddata',
-            text: 'get raw sound data (Array & Objects)',
-            blockType: Scratch.BlockType.REPORTER,
-            disableMonitor: true,
+        arguments: {
+        SOUND: {
+                type: Scratch.ArgumentType.SOUND,
+        },
+            MENU: {
+                type: Scratch.ArgumentType.STRING,
+                menu: 'soundmenu'
+            },
+    }
           },
         {   
         blockType: Scratch.BlockType.LABEL,
@@ -495,10 +523,35 @@
                 defaultValue: "Error!",
         }
     }
+          },
+        {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Random Blocks (Kinda Useless)`,
+    },
+               {
+            opcode: 'rawcostumedata',
+            text: 'get raw costume/backdrop data (Array & Objects)',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+          },
+                         {
+            opcode: 'rawsounddata',
+            text: 'get raw sound data (Array & Objects)',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+          },
+        ],
+        menus:
+{
+ soundmenu: {
+            acceptReporters: true,
+            items: ['format', 'sample rate', 'sample count']
           }
-        ]
+}
       };
     }
+
 //i had to take ts from storage + since penguinmod ext api so confusing:sob:
             async creditsModal() {
             const modalText = 
@@ -764,6 +817,44 @@ return result;
         getbottom(args)
     {
     return (args["Y"] - (args["HEIGHT"] / 2)) + 4;
+    }
+
+        costumeexists(args, util)
+    {
+        const costumes = util.target.getCostumes();
+    const index = util.target.getCostumeIndexByName(args["COSTUME"]);
+    if (!costumes[index]) 
+    {
+    return "false";
+    }
+    else
+    {
+    return "true";
+    }
+    }
+    getsounddata(args, util)
+    {
+            const sounds = util.target.getSounds();
+        let index = 0;
+        for (let i = 0; i < sounds.length; i++) {
+            if (sounds[i].name === args.SOUND) index = i + 1;
+        }
+if (!sounds[index -1]) return "";
+                const sound = sounds[index -1];
+    switch (args.MENU) {
+    case 'format':
+return sound.dataFormat;
+    case 'sample rate':
+return sound.rate;
+    case 'sample count':
+return sound.sampleCount;
+}
+    }
+newlinetoarray(args, util)
+    {
+        const text = args["TEXT"];
+      const newlinereplace = text.replace(/\n/g, '","');
+return '["' + newlinereplace + '"]';
     }
   }
 
