@@ -56,6 +56,7 @@
             opcode: 'mapVal',
             text: 'map [VAL] from [MININ] to [MAXIN] as [MINOUT] to [MAXOUT]',
             blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
             disableMonitor: true,
             arguments: {
         VAL: {
@@ -168,6 +169,7 @@
             opcode: 'newlinetoarray',
             text: 'convert each new line in [TEXT] to an array',
             blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
             disableMonitor: true,
             arguments: {
         TEXT: {
@@ -292,6 +294,7 @@
             opcode: 'getcostumeid',
             text: 'get name of [ID] from this sprites costumes/backdrops',
             blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
             disableMonitor: true,
             arguments: {
         ID: {
@@ -304,6 +307,7 @@
             opcode: 'getcostumenametoid',
             text: 'get id of costume/backdrop [COSTUME]',
             blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
             disableMonitor: true,
             arguments: {
         COSTUME: {
@@ -361,6 +365,7 @@
             opcode: 'getsoundid',
             text: 'get name of [ID] from this sprites sounds',
             blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
             disableMonitor: true,
             arguments: {
         ID: {
@@ -373,6 +378,7 @@
             opcode: 'getsoundnametoid',
             text: 'get id of sound [SOUND]',
             blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
             disableMonitor: true,
             arguments: {
         SOUND: {
@@ -533,12 +539,14 @@
             opcode: 'rawcostumedata',
             text: 'get raw costume/backdrop data (Array & Objects)',
             blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
             disableMonitor: true,
           },
                          {
             opcode: 'rawsounddata',
             text: 'get raw sound data (Array & Objects)',
             blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
             disableMonitor: true,
           },
         ],
