@@ -12,7 +12,6 @@
         alert("This extension needs to be unsandboxed to run!")
         return
     }
-
     const ExtForge_Utils = {
         // from https://jwklong.github.io/extforge
         Broadcasts: new function() {
@@ -72,6 +71,14 @@
             text: "direction",
             value: "dir"
         }, "size", "stretch x", "stretch y"]
+    }
+
+    menus["setprop"] = {
+        acceptReporters: true,
+        items: ["muted", "volume", {
+            text: "singing/playing loops",
+            value: "singing"
+        }]
     }
 
     Scratch.extensions.register(new Extension());
