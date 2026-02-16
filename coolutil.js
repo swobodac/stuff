@@ -290,6 +290,42 @@
         },
     }
           },
+            {
+            opcode: 'graidentsvgtimer',
+            text: 'generate svg data for radical timer (with graident) with progress [PROGRESS] radius [RADIUS] thickness [THICKNESS] blank color 1 [COLOR1]  blank color 2 [COLOR2] lit color 1 [COLOR3] lit color 2 [COLOR4]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        PROGRESS: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 50,
+        },
+                RADIUS: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 18,
+        },
+                THICKNESS: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 5,
+        },
+                COLOR1: {
+                type: Scratch.ArgumentType.COLOR,
+                defaultValue: "#808080",
+        },
+                COLOR2: {
+                type: Scratch.ArgumentType.COLOR,
+                defaultValue: "#4d4d4d",
+        },
+                COLOR3: {
+                type: Scratch.ArgumentType.COLOR,
+                defaultValue: "#ffffff",
+        },
+                COLOR4: {
+                type: Scratch.ArgumentType.COLOR,
+                defaultValue: "#cccccc",
+        },
+    }
+          },
      {
             opcode: 'getcostumeid',
             text: 'get name of [ID] from this sprites costumes/backdrops',
@@ -633,7 +669,7 @@ return "false";
     const bpm = args["BPM"];
     const bpb = args["BPB"];
     const bars = args["BARS"];
-    return (bars * bpb) * (60 / bpm);
+    return ((bars * bpb) * 60) / bpm;
     }
     simplegetlooptimeusingbpm(args){
     return (960 / args["BPM"]);
@@ -799,6 +835,24 @@ if (!sounds[index]) return "";
       const centerpos = (size / 2);
 
     const result = `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><circle cx="${centerpos}" cy="${centerpos}" r="${radius}" fill="none" stroke="${blankcolor}" stroke-width="${thickness}"/><circle cx="${centerpos}" cy="${centerpos}" r="${radius}" fill="none" stroke="${litcolor}" stroke-width="${thickness}" stroke-dasharray="${dasharray}" stroke-dashoffset="${dashoffset}" transform="rotate(-90 ${centerpos} ${centerpos})"/></svg>`;
+return result;
+    }
+    graidentsvgtimer(args, util)
+    {
+    const progress = args["PROGRESS"];
+    const thickness = args["THICKNESS"];
+    const radius = args["RADIUS"];
+    const blankcolor = args["COLOR1"];
+ const blankcolor2 = args["COLOR2"];
+    const litcolor = args["COLOR3"];
+    const litcolor2 = args["COLOR4"];
+
+    const dasharray = 2 * Math.PI * radius;
+    const dashoffset = dasharray - (progress / 100) * dasharray;
+      const size = (radius + thickness) * (2 + 10);
+      const centerpos = (size / 2);
+
+    const result = `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><linearGradient id="blank" gradientTransform="rotate(90)"><stop offset="5%" stop-color="${blankcolor}" /><stop offset="95%" stop-color="${blankcolor2}" /></linearGradient><linearGradient id="lit" gradientTransform="rotate(0)"><stop offset="5%" stop-color="${litcolor2}" /><stop offset="95%" stop-color="${litcolor}" /></linearGradient><circle cx="${centerpos}" cy="${centerpos}" r="${radius}" fill="none" stroke="url('#blank')" stroke-width="${thickness}"/><circle cx="${centerpos}" cy="${centerpos}" r="${radius}" fill="none" stroke="url('#lit')" stroke-width="${thickness}" stroke-dasharray="${dasharray}" stroke-dashoffset="${dashoffset}" transform="rotate(-90 ${centerpos} ${centerpos})"/></svg>`;
 return result;
     }
     //thanks to prismatic for showing me how this works
