@@ -12,6 +12,7 @@
         alert("This extension needs to be unsandboxed to run!")
         return
     }
+
     const ExtForge_Utils = {
         // from https://jwklong.github.io/extforge
         Broadcasts: new function() {
@@ -48,10 +49,7 @@
 
     menus["getfrompolo"] = {
         acceptReporters: true,
-        items: [{
-            text: "Occupant",
-            value: "occupant"
-        }, {
+        items: ["occupant", {
             text: "position",
             value: "pos"
         }, "distance set", {
