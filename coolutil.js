@@ -102,6 +102,22 @@
     }
           },
     {
+            opcode: 'makewidthheightresizeable',
+            text: 'make [VAL] resizeable using size [SIZE]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        VAL: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 64,
+        },
+                SIZE: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 100,
+        }
+    }
+          },
+    {
             opcode: 'getleft',
             text: 'get left from [WIDTH] while at x position [X]',
             blockType: Scratch.BlockType.REPORTER,
@@ -918,6 +934,10 @@ newlinetoarray(args, util)
       const newlinereplace = text.replace(/\n/g, '","');
 return '["' + newlinereplace + '"]';
     }
+makewidthheightresizeable(args)
+{
+return args["VAL"] * (args["SIZE"]/100);
+}
   }
 
   Scratch.extensions.register(new CoolUtil());
