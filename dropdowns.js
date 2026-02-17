@@ -59,7 +59,15 @@
 
     menus["getfromchar"] = {
         acceptReporters: true,
-        items: ["category", "active", "muted", "volume", {
+        items: ["category", "active", "muted", {
+            text: "true volume",
+            value: "volume"
+        },
+                {
+            text: "max volume",
+            value: "maxvolume"
+        },
+      {
             text: "singing/playing loops",
             value: "singing"
         }]
