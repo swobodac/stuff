@@ -93,6 +93,16 @@
             value: "singing"
         }]
     }
+    menus["getloopprop"] = {
+        acceptReporters: true,
+        items: ["id", "bpm", {
+            text: "beats per bar",
+            value: "bpb"
+        }, "bars", "length", {
+            text: "beat length",
+            value: "beatlength"
+        }]
+    }
 
     Scratch.extensions.register(new Extension());
 })(Scratch);
