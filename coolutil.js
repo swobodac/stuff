@@ -273,6 +273,38 @@
         }
     }
           },
+          {
+            opcode: 'xdistancesetbymousecustomizeable',
+            text: 'is my x distance [DIST] while at [X] set by mouse x',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: true,
+            arguments: {
+        DIST: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 75,
+        },
+        X: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        }
+    }
+          },
+                    {
+            opcode: 'xdistancesetbymousecustomizeable',
+            text: 'is my y distance [DIST] while at [Y] set by mouse y',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: true,
+            arguments: {
+        DIST: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 75,
+        },
+        Y: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        }
+    }
+          },
                       {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
@@ -938,6 +970,34 @@ makewidthheightresizeable(args)
 {
 return args["VAL"] * (args["SIZE"]/100);
 }
+    xdistancesetbymousecustomizeable(args, util){
+    const mouse = Scratch.vm.runtime.ioDevices.mouse.getScratchX();
+    const distance = args["DIST"];
+    const x = args["X"];
+    const result = (mouse > x - (distance / 1.85)) & (mouse < x + (distance / 1.85))
+if (result)
+{
+return "true";
+}
+else
+{
+return "false";
+}
+    }
+    ydistancesetbymousecustomizeable(args, util){
+    const mouse = Scratch.vm.runtime.ioDevices.mouse.getScratchY();
+    const distance = args["DIST"];
+    const y = args["Y"];
+    const result = (mouse > y - (distance / 1.85)) & (mouse < y + (distance / 1.85))
+if (result)
+{
+return "true";
+}
+else
+{
+return "false";
+}
+    }
   }
 
   Scratch.extensions.register(new CoolUtil());
