@@ -290,7 +290,7 @@
     }
           },
                     {
-            opcode: 'xdistancesetbymousecustomizeable',
+            opcode: 'ydistancesetbymousecustomizeable',
             text: 'is my y distance [DIST] while at [Y] set by mouse y',
             blockType: Scratch.BlockType.BOOLEAN,
             disableMonitor: true,
