@@ -1,6 +1,5 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
-//update check
 
 (function(Scratch) {
   'use strict';
@@ -1035,4 +1034,5 @@ return "false";
 
   Scratch.extensions.register(new CoolUtil());
 })(Scratch);
+
 
