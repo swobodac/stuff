@@ -1,6 +1,5 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
-//testing if github actually updates the raw txt for this
 
 (function(Scratch) {
   'use strict';
@@ -303,6 +302,26 @@
         Y: {
                 type: Scratch.ArgumentType.NUMBER,
                 defaultValue: 0,
+        }
+    }
+          },
+                    {
+            opcode: 'checkifvalisinzone',
+            text: 'is [VAL] between [START] & [END]',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: true,
+            arguments: {
+        VAL: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 50,
+        },
+        START: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+        END: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 100,
         }
     }
           },
@@ -999,8 +1018,19 @@ else
 return "false";
 }
     }
+     checkifvalisinzone(args)
+     {
+    const result = (args["VAL"] > args["START"]) & (args["VAL"] < args["END"]);
+if (result)
+{
+return "true";
+}
+else
+{
+return "false";
+}
+     }
   }
 
   Scratch.extensions.register(new CoolUtil());
 })(Scratch);
-
