@@ -527,14 +527,14 @@
     },
               {
             opcode: 'getamountofspriteswithvar',
-            text: 'count sprites with variable [VAR]',
+            text: 'count sprites with variable [VAR] (can be used to count total sprites in the project)',
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: true,
 	    allowDropAnywhere: true,
        arguments: {
                 VAR: {
                 type: Scratch.ArgumentType.STRING,
-                defaultValue: "my variable (can be used to count total sprites in the project)",
+                defaultValue: "my variable",
         }
       }
           },
@@ -1163,4 +1163,5 @@ return settocount;
 
   Scratch.extensions.register(new CoolUtil());
 })(Scratch);
+
 
