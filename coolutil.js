@@ -1,10 +1,6 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
-//variables update
-//yay
-//useful for v7 incredibox engine users
-//i messed up something in here, but its fixed now
-
+//organized update
 (function(Scratch) {
   'use strict';
 
@@ -33,7 +29,12 @@
                     {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
-        text: `Calculations & Runtime`,
+        text: `Math`,
+    },
+                    {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Forumluas`,
     },
      {
             opcode: 'clamp',
@@ -106,22 +107,6 @@
     }
           },
     {
-            opcode: 'makewidthheightresizeable',
-            text: 'make [VAL] resizeable using size [SIZE]',
-            blockType: Scratch.BlockType.REPORTER,
-            disableMonitor: true,
-            arguments: {
-        VAL: {
-                type: Scratch.ArgumentType.NUMBER,
-                defaultValue: 64,
-        },
-                SIZE: {
-                type: Scratch.ArgumentType.NUMBER,
-                defaultValue: 100,
-        }
-    }
-          },
-    {
             opcode: 'getleft',
             text: 'get left from [WIDTH] while at x position [X]',
             blockType: Scratch.BlockType.REPORTER,
@@ -185,43 +170,12 @@
         }
     }
           },
-    {
-            opcode: 'newlinetoarray',
-            text: 'convert each new line in [TEXT] to an array',
-            blockType: Scratch.BlockType.REPORTER,
-            allowDropAnywhere: true,
-            disableMonitor: true,
-            arguments: {
-        TEXT: {
-                type: Scratch.ArgumentType.STRING,
-                defaultValue: "",
-        }
-    }
-          },
-            {
-            opcode: 'spriteName',
-            text: 'get sprite name',
-            blockType: Scratch.BlockType.REPORTER,
-            disableMonitor: false,
-          },
-                    {
-            opcode: 'removeFolderName',
-            text: 'get sprite name without folder name',
-            blockType: Scratch.BlockType.REPORTER,
-            disableMonitor: false,
-          },
-                                                  {
-            opcode: 'checkpackaged',
-            text: 'check if i am packaged',
-            blockType: Scratch.BlockType.BOOLEAN,
-            disableMonitor: false,
-          },
-            {   
+                        {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
-        text: `Positioning & Distance Checks`,
+        text: `Positioning`,
     },
-            {
+ {
             opcode: 'centerusingdistance',
             text: 'get centered start x using [AMOUNT] amount of items far apart by [DIST]',
             blockType: Scratch.BlockType.REPORTER,
@@ -253,6 +207,47 @@
         }
     }
           },
+                      {
+            opcode: 'getposusingstartdistandid',
+            text: 'get position of item id [ID] starting at [START] far apart by [DIST]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        ID: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 1,
+        },
+        DIST: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 65,
+        },
+                START: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 260,
+        },
+    }
+          },
+    {
+            opcode: 'makewidthheightresizeable',
+            text: 'make [VAL] resizeable using size [SIZE]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        VAL: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 64,
+        },
+                SIZE: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 100,
+        }
+    }
+          },
+ {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Distance Checks`,
+    },
           {
             opcode: 'xdistancesetbymouse',
             text: 'is my x distance [DIST] set by mouse x',
@@ -329,10 +324,16 @@
         }
     }
           },
+           "---",
                       {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
-        text: `Costume & Sound Data`,
+        text: `Runtime`,
+    },
+                      {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Costumes & SVGs`,
     },
             {
             opcode: 'svgtimer',
@@ -469,6 +470,11 @@
         }
     }
           },
+                              {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Sounds`,
+    },
                          {
             opcode: 'getsoundid',
             text: 'get name of [ID] from this sprites sounds',
@@ -520,11 +526,23 @@
             },
     }
           },
-                      {   
+                          {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
-        text: `Variable Counters`,
+        text: `Sprites, Project & Variable Counters`,
     },
+    {
+            opcode: 'spriteName',
+            text: 'get sprite name',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+          },
+                                                  {
+            opcode: 'checkpackaged',
+            text: 'check if i am packaged',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: false,
+          },
               {
             opcode: 'getamountofspriteswithvar',
             text: 'count sprites with variable [VAR] (can be used to count total sprites in the project)',
@@ -568,10 +586,16 @@
         }
       }
           },
+     "---",
         {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
         text: `Incredimodding`,
+    },
+                      {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Loop & Beat Time`,
     },
                               {
             opcode: 'simplegetlooptimeusingbpm',
@@ -637,9 +661,30 @@
         }
     }
           },
+            {
+            opcode: 'loopprogress',
+            text: 'get progress of loop using timer [TIMER] & loop time [LOOPTIME]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        LOOPTIME: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 8,
+        },
+                TIMER: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+    }
+          },
+                      {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Phases/Versions/Submods`,
+    },
                       {
             opcode: 'phasecalc',
-            text: 'get loop id [VAL] + phase [PHASE] * [LOOPS] normal loops',
+            text: 'get loop id [VAL] + phase/version/submod [PHASE] * [LOOPS] normal loops',
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: true,
             arguments: {
@@ -657,6 +702,37 @@
         }
     }
           },
+           "---",
+                                 {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Conversions`,
+    },
+                    {
+            opcode: 'removeFolderName',
+            text: 'get sprite name without folder name',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+          },
+        {
+            opcode: 'newlinetoarray',
+            text: 'convert each new line in [TEXT] to an array',
+            blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
+            disableMonitor: true,
+            arguments: {
+        TEXT: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "",
+        }
+    }
+          },
+     "---",
+                                     {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Debugging`,
+    },
         {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
@@ -938,12 +1014,12 @@ if (!sounds[index]) return "";
         rawcostumedata(args, util)
     {
             const costumes = util.target.getCostumes();
-            return costumes;
+            return JSON.stringify(costumes);
     }
     rawsounddata(args, util)
     {
             const sounds = util.target.getSounds();
-            return sounds;
+            return JSON.stringify(sounds);
     }
     checksvg(args, util)
     {
@@ -1103,7 +1179,17 @@ else
 return "false";
 }
      }
+    getposusingstartdistandid(args)
+    {
+        const start =  -Math.abs(args["START"]);
 
+      if (Math.sign(args["START"]) === -1)
+      {
+      const start =  args["START"];
+      }
+            const pos = start + (args["DIST"] * (args["ID"]-1));
+      return pos;
+    }
      //var stuff from variables expanded
          getamountofspriteswithvar(args,util)
     {
@@ -1159,10 +1245,14 @@ settocount + 0;
 });
 return settocount;
     }
+    //end of var count stuff
+    loopprogress(args)
+    {
+    const progress =  (args["TIMER"] / args['LOOPTIME']) * 100;
+
+    return  Math.min(Math.max(progress, 0), 100);
+    }
   }
 
   Scratch.extensions.register(new CoolUtil());
 })(Scratch);
-
-
-
