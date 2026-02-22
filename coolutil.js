@@ -1,5 +1,9 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
+//variables update
+//yay
+//useful for v7 incredibox engine users
+
 
 (function(Scratch) {
   'use strict';
@@ -1159,3 +1163,4 @@ return settocount;
 
   Scratch.extensions.register(new CoolUtil());
 })(Scratch);
+
