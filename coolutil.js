@@ -3,7 +3,7 @@
 //variables update
 //yay
 //useful for v7 incredibox engine users
-
+//i messed up something in here, but its fixed now
 
 (function(Scratch) {
   'use strict';
@@ -1163,5 +1163,6 @@ return settocount;
 
   Scratch.extensions.register(new CoolUtil());
 })(Scratch);
+
 
 
