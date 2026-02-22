@@ -1,8 +1,5 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
-//github
-//please update:sob:
-
 
 (function(Scratch) {
   'use strict';
@@ -519,6 +516,54 @@
             },
     }
           },
+                      {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Variable Counters`,
+    },
+              {
+            opcode: 'getamountofspriteswithvar',
+            text: 'count sprites with variable [VAR]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+	    allowDropAnywhere: true,
+       arguments: {
+                VAR: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "my variable (can be used to count total sprites in the project)",
+        }
+      }
+          },
+              {
+            opcode: 'getamountofspriteswithvarthatsnotblank',
+            text: 'count sprites with variable [VAR] that arent blank',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+	    allowDropAnywhere: true,
+       arguments: {
+                VAR: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "my variable",
+        }
+      }
+          },
+          {
+            opcode: 'getamountofspriteswithvarsetto',
+            text: 'count sprites with [VAR] set to [VAL]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+	    allowDropAnywhere: true,
+       arguments: {
+                VAR: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "my variable",
+        },
+                VAL: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "1",
+        }
+      }
+          },
         {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
@@ -696,6 +741,27 @@ yah alot of this uses penguinmod base extesntions code😭`;
                 alert(modalText);
             }
         }
+
+            //taken from variables expanded
+        findVariable(varName, sprite) {
+      // support for all variable types (Cloud, Sprite-Only, Global)
+      varName = Scratch.Cast.toString(varName);
+      const cloudID = Scratch.vm.runtime.getTargetForStage().lookupVariableByNameAndType(Scratch.Cast.toString("ÃƒÂ¢Ã‹ÂœÃ‚Â " + varName), "");
+      if (cloudID) return cloudID.id;
+      let varFind = "";
+try {
+      for (const name of Object.getOwnPropertyNames(sprite.variables)) {
+        varFind = sprite.variables[name].name;
+        if (varFind === varName) return sprite.variables[name].id;
+      }
+} catch (error) {
+return "";
+}
+
+      const variable = Scratch.vm.runtime.getTargetForStage().lookupVariableByNameAndType(varName, "");
+      return variable ? variable.id : "";
+    }
+    
 
     //Block Functions yay
     centerusingdistance(args){
@@ -1033,10 +1099,63 @@ else
 return "false";
 }
      }
+
+     //var stuff from variables expanded
+         getamountofspriteswithvar(args,util)
+    {
+  let count = 0;
+Scratch.vm.runtime.targets.forEach(target => {
+
+     const variable = this.findVariable(args["VAR"], target);
+try {
+     const val = target.lookupVariableById(variable).value;
+       count++;
+} catch (error) {
+count + 0;
+}
+});
+return count;
+    }
+         getamountofspriteswithvarthatsnotblank(args,util)
+    {
+  let count = 0;
+Scratch.vm.runtime.targets.forEach(target => {
+
+     const variable = this.findVariable(args["VAR"], target);
+try {
+     const val = target.lookupVariableById(variable).value;
+
+       if (val !== "" && val !== 0 && val !== "0")
+      {
+       count++;
+      }
+} catch (error) {
+count + 0;
+}
+});
+return count;
+    }
+
+    getamountofspriteswithvarsetto(args,util)
+    {
+  let settocount = 0;
+Scratch.vm.runtime.targets.forEach(target => {
+
+     const variable = this.findVariable(args["VAR"], target);
+try {
+     const val = target.lookupVariableById(variable).value;
+
+       if (val == args["VAL"])
+      {
+       settocount++;
+      }
+} catch (error) {
+settocount + 0;
+}
+});
+return settocount;
+    }
   }
 
   Scratch.extensions.register(new CoolUtil());
 })(Scratch);
-
-
-
