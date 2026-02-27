@@ -1,6 +1,6 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
-//organized update
+//square bounds update 
 (function(Scratch) {
   'use strict';
 
@@ -246,7 +246,7 @@
  {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
-        text: `Distance Checks`,
+        text: `Distance & Bounds Checks`,
     },
           {
             opcode: 'xdistancesetbymouse',
@@ -302,6 +302,78 @@
                 type: Scratch.ArgumentType.NUMBER,
                 defaultValue: 0,
         }
+    }
+          },
+          {
+            opcode: 'squareboundscheck',
+            text: 'is x [X] & y [Y] in square bounds of x [OTHERX] & y [OTHERY] using width [WIDTH] & height [HEIGHT]',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: true,
+            arguments: {
+        X: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+        OTHERX: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+        WIDTH: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 64,
+        },
+        Y: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+        OTHERY: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+        HEIGHT: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 32,
+        },
+    }
+          },
+          {
+            opcode: 'xsquareboundscheck',
+            text: 'is x [X] in square bounds of x [OTHERX] using width [WIDTH]',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: true,
+            arguments: {
+        X: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+        OTHERX: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+        WIDTH: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 64,
+        },
+    }
+          },
+          {
+            opcode: 'ysquareboundscheck',
+            text: 'is y [Y] in square bounds of y [OTHERY] using height [HEIGHT]',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: true,
+            arguments: {
+        Y: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+        OTHERY: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+        HEIGHT: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 32,
+        },
     }
           },
                     {
@@ -1251,6 +1323,45 @@ return settocount;
     const progress =  (args["TIMER"] / args['LOOPTIME']) * 100;
 
     return  Math.min(Math.max(progress, 0), 100);
+    }
+    squareboundscheck(args)
+    {
+    {
+    const halfwidth = args["WIDTH"] / 2 
+    const halfheight = args["HEIGHT"] / 2 
+    if ((((args["OTHERX"] - halfwidth) <= args["X"]) & (args["X"] <= (args["OTHERX"] + halfwidth))) & ((args["OTHERY"] - halfheight) <= args["Y"]) & (args["Y"] <= (args["OTHERY"] + halfheight)))
+        {
+    return 'true';
+        }
+        else
+        {
+    return 'false';
+        }
+    }
+}
+    xsquareboundscheck(args)
+    {
+    const halfwidth = args["WIDTH"] / 2 
+    if (((args["OTHERX"] - halfwidth) <= args["X"]) & (args["X"] <= (args["OTHERX"] + halfwidth)))
+        {
+    return 'true';
+        }
+        else
+        {
+    return 'false';
+        }
+    }
+    ysquareboundscheck(args)
+    {
+    const halfheight = args["HEIGHT"] / 2 
+    if (((args["OTHERY"] - halfheight) <= args["Y"]) & (args["Y"] <= (args["OTHERY"] + halfheight)))
+        {
+    return 'true';
+        }
+        else
+        {
+    return 'false';
+        }
     }
   }
 
