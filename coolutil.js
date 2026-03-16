@@ -1,11 +1,22 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
-//square bounds update 
+//stuff
 (function(Scratch) {
   'use strict';
 
-  class CoolUtil {
+    const vm = Scratch.vm;
+  const runtime = Scratch.vm.runtime;
 
+  if (!Scratch.extensions.unsandboxed) 
+  {
+throw new Error("Cool Utilies works better if your running it unsandboxed!");
+  }
+
+  class CoolUtil {
+constructor()
+{
+this.lastUpdate = Date.now();
+}
     getInfo() {
       return {
         id: "coolstuff",
@@ -170,6 +181,52 @@
         }
     }
           },
+              {
+            opcode: 'randomusingnumstartingatzrero',
+            text: 'get random value starting at 0 using [VAL]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        VAL: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 10,
+        }
+    }
+          },
+    {
+            opcode: 'randomusingnum',
+            text: 'get random value using just [VAL]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        VAL: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 10,
+        }
+    }
+          },
+    {
+            opcode: 'randomusingdifferentiator',
+            text: 'get random value of [VAL] being differentiated by [DIFF]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        VAL: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 100,
+        },
+                DIFF: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 5,
+        }
+    }
+          },
+    {
+            opcode: 'pi',
+            text: 'π',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+          },
                         {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
@@ -240,6 +297,34 @@
                 SIZE: {
                 type: Scratch.ArgumentType.NUMBER,
                 defaultValue: 100,
+        }
+    }
+          },
+    {
+            opcode: 'lerpdir',
+            text: 'turn direction [CURDIR] to [DIRECTION] based of acceleration using goto x [X] & accelerated x [OTHERX] using speed [SPEED]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        CURDIR: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 90,
+        },
+        DIRECTION: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 90,
+        },
+                X: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+                OTHERX: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+                SPEED: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0.5,
         }
     }
           },
@@ -609,11 +694,33 @@
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: false,
           },
+    {
+            opcode: 'delta',
+            text: 'get delta time',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+          },
                                                   {
             opcode: 'checkpackaged',
             text: 'check if i am packaged',
             blockType: Scratch.BlockType.BOOLEAN,
             disableMonitor: false,
+          },
+              {
+            opcode: 'flashbangimage',
+            text: 'flashbang user with image [IMAGE] fading out for [SPEED] seconds',
+            blockType: Scratch.BlockType.COMMAND,
+            disableMonitor: true,
+       arguments: {
+                IMAGE: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "https://picsum.photos/200",
+        },
+                SPEED: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 10,
+        }
+      }
           },
               {
             opcode: 'getamountofspriteswithvar',
@@ -859,7 +966,16 @@
  soundmenu: {
             acceptReporters: true,
             items: ['format', 'sample rate', 'sample count']
-          }
+          },
+ variables: {
+            acceptReporters: true,
+            items: "getVariables"
+          },
+
+sprites: {
+acceptReporters: true,
+items: "getSpriteMenu"
+}
 }
       };
     }
@@ -867,10 +983,10 @@
 //i had to take ts from storage + since penguinmod ext api so confusing:sob:
             async creditsModal() {
             const modalText = 
-`Penguinmod Team - Most Functions from base extenstions
-DinoBuilder Team - Some Functions
+`Penguinmod Team - Most Functions from base extenstions.
+DinoBuilder Team - Some Functions.
 Prismatic - Some Updated Math Functions & Uninterpolate block idea & functions.
-Draker - Some Block Ideas & SVG Timer Data (that i modified a tiny bit)
+Draker - Some Block Ideas & SVG Timer Data (that i modified a tiny bit).
 Johnny - Radical SVG Timer idea.
 
 yah alot of this uses penguinmod base extesntions code😭`;
@@ -894,11 +1010,29 @@ yah alot of this uses penguinmod base extesntions code😭`;
             }
         }
 
+            getSpriteMenu({}) {
+        let sprites = new Array();
+        for (let target of runtime.targets.filter(v => v !== vm.runtime._stageTarget)) {
+            if (!sprites.includes(target.sprite.name)) sprites.push(target.sprite.name)
+        }
+    if (sprites.length === 0)  return ["no sprites found"];
+        return sprites;
+    }
+
             //taken from variables expanded
+
+        getVariables() {
+      const globalVars = Object.values(runtime.getTargetForStage().variables).filter((x) => x.type == "");
+      const localVars = Object.values(vm.editingTarget.variables).filter((x) => x.type == "");
+      const uniqueVars = [...new Set([...globalVars, ...localVars])];
+      if (uniqueVars.length === 0) return ["no variables"];
+      return uniqueVars.map((i) => Scratch.Cast.toString(i.name));
+    }
+
         findVariable(varName, sprite) {
       // support for all variable types (Cloud, Sprite-Only, Global)
       varName = Scratch.Cast.toString(varName);
-      const cloudID = Scratch.vm.runtime.getTargetForStage().lookupVariableByNameAndType(Scratch.Cast.toString("ÃƒÂ¢Ã‹ÂœÃ‚Â " + varName), "");
+      const cloudID = runtime.getTargetForStage().lookupVariableByNameAndType(Scratch.Cast.toString("ÃƒÂ¢Ã‹ÂœÃ‚Â " + varName), "");
       if (cloudID) return cloudID.id;
       let varFind = "";
 try {
@@ -910,7 +1044,7 @@ try {
 return "";
 }
 
-      const variable = Scratch.vm.runtime.getTargetForStage().lookupVariableByNameAndType(varName, "");
+      const variable = runtime.getTargetForStage().lookupVariableByNameAndType(varName, "");
       return variable ? variable.id : "";
     }
     
@@ -927,32 +1061,16 @@ return "";
         return (start * 2) / (amountofitems - 1);
     }
     xdistancesetbymouse(args, util){
-    const mouse = Scratch.vm.runtime.ioDevices.mouse.getScratchX();
+    const mouse = runtime.ioDevices.mouse.getScratchX();
     const distance = args["DIST"];
     const x = (util.target !== undefined ? util.target.x : 0);
-    const result = (mouse > x - (distance / 1.85)) & (mouse < x + (distance / 1.85))
-if (result)
-{
-return "true";
-}
-else
-{
-return "false";
-}
+    return Boolean(!!(mouse > x - (distance / 1.85)) & (mouse < x + (distance / 1.85)))
     }
     ydistancesetbymouse(args, util){
-    const mouse = Scratch.vm.runtime.ioDevices.mouse.getScratchY();
+    const mouse = runtime.ioDevices.mouse.getScratchY();
     const distance = args["DIST"];
     const y = (util.target !== undefined ? util.target.y : 0);
-    const result = (mouse > y - (distance / 1.85)) & (mouse < y + (distance / 1.85))
-if (result)
-{
-return "true";
-}
-else
-{
-return "false";
-}
+    return Boolean(!!(mouse > y - (distance / 1.85)) & (mouse < y + (distance / 1.85)))
     }
     getlooptimeusingbpmbarsbpb(args){
     const bpm = args["BPM"];
@@ -1047,13 +1165,7 @@ return "false";
     }
     checkpackaged(util)
     {
-     if (typeof ScratchBlocks !== "undefined") {
-        return false;
-     }
-     else
-     {
-            return true;
-     }
+    return Boolean(typeof ScratchBlocks === "undefined");
     }
     getcostumedataurl(args, util)
     {
@@ -1065,12 +1177,16 @@ return "false";
     }
     getcostumecontent(args, util)
     {
+        try {
         const costumes = util.target.getCostumes();
     const index = util.target.getCostumeIndexByName(args["COSTUME"]);
     if (!costumes[index]) return "";
     const costume = costumes[index];
-    const skin = Scratch.vm.renderer._allSkins[costume.skinId];
+    const skin = vm.renderer._allSkins[costume.skinId];
 return  decodeURIComponent(skin._svgImage.src.split(",")[1]);
+} catch (error) {
+    return "";
+}
     }
         getsounddataurl(args, util)
     {
@@ -1099,14 +1215,7 @@ if (!sounds[index]) return "";
     const index = util.target.getCostumeIndexByName(args["COSTUME"]);
     if (!costumes[index]) return "false";
     const costume = costumes[index];
-    if (costume.dataFormat == 'svg')
-    {
-    return "true";
-    }
-    else
-    {
-        return "false";
-    }
+    return Boolean(costume.dataFormat === 'svg')
     }
 
     //remade from draker mild util since thats the only good svg timer i have :)
@@ -1174,14 +1283,7 @@ return result;
     {
         const costumes = util.target.getCostumes();
     const index = util.target.getCostumeIndexByName(args["COSTUME"]);
-    if (!costumes[index]) 
-    {
-    return "false";
-    }
-    else
-    {
-    return "true";
-    }
+    return Boolean(!!costumes[index]) 
     }
     getsounddata(args, util)
     {
@@ -1212,45 +1314,21 @@ makewidthheightresizeable(args)
 return args["VAL"] * (args["SIZE"]/100);
 }
     xdistancesetbymousecustomizeable(args, util){
-    const mouse = Scratch.vm.runtime.ioDevices.mouse.getScratchX();
+    const mouse = runtime.ioDevices.mouse.getScratchX();
     const distance = args["DIST"];
     const x = args["X"];
-    const result = (mouse > x - (distance / 1.85)) & (mouse < x + (distance / 1.85))
-if (result)
-{
-return "true";
-}
-else
-{
-return "false";
-}
+    return Boolean(!!(mouse > x - (distance / 1.85)) & (mouse < x + (distance / 1.85)));
     }
     ydistancesetbymousecustomizeable(args, util){
-    const mouse = Scratch.vm.runtime.ioDevices.mouse.getScratchY();
+    const mouse = runtime.ioDevices.mouse.getScratchY();
     const distance = args["DIST"];
     const y = args["Y"];
-    const result = (mouse > y - (distance / 1.85)) & (mouse < y + (distance / 1.85))
-if (result)
-{
-return "true";
-}
-else
-{
-return "false";
-}
+    return Boolean(!!(mouse > y - (distance / 1.85)) & (mouse < y + (distance / 1.85)));
     }
      checkifvalisinzone(args)
      {
-    const result = (args["VAL"] > args["START"]) & (args["VAL"] < args["END"]);
-if (result)
-{
-return "true";
+    return Boolean(!!(args["VAL"] >= args["START"]) & (args["VAL"] <= args["END"]));
 }
-else
-{
-return "false";
-}
-     }
     getposusingstartdistandid(args)
     {
         const start =  -Math.abs(args["START"]);
@@ -1266,7 +1344,7 @@ return "false";
          getamountofspriteswithvar(args,util)
     {
   let count = 0;
-Scratch.vm.runtime.targets.forEach(target => {
+runtime.targets.forEach(target => {
 
      const variable = this.findVariable(args["VAR"], target);
 try {
@@ -1281,7 +1359,7 @@ return count;
          getamountofspriteswithvarthatsnotblank(args,util)
     {
   let count = 0;
-Scratch.vm.runtime.targets.forEach(target => {
+runtime.targets.forEach(target => {
 
      const variable = this.findVariable(args["VAR"], target);
 try {
@@ -1301,7 +1379,7 @@ return count;
     getamountofspriteswithvarsetto(args,util)
     {
   let settocount = 0;
-Scratch.vm.runtime.targets.forEach(target => {
+runtime.targets.forEach(target => {
 
      const variable = this.findVariable(args["VAR"], target);
 try {
@@ -1326,43 +1404,71 @@ return settocount;
     }
     squareboundscheck(args)
     {
-    {
     const halfwidth = args["WIDTH"] / 2 
     const halfheight = args["HEIGHT"] / 2 
-    if ((((args["OTHERX"] - halfwidth) <= args["X"]) & (args["X"] <= (args["OTHERX"] + halfwidth))) & ((args["OTHERY"] - halfheight) <= args["Y"]) & (args["Y"] <= (args["OTHERY"] + halfheight)))
-        {
-    return 'true';
-        }
-        else
-        {
-    return 'false';
-        }
-    }
+    return Boolean(!!(((args["OTHERX"] - halfwidth) <= args["X"]) & (args["X"] <= (args["OTHERX"] + halfwidth))) & ((args["OTHERY"] - halfheight) <= args["Y"]) & (args["Y"] <= (args["OTHERY"] + halfheight)))
 }
     xsquareboundscheck(args)
     {
     const halfwidth = args["WIDTH"] / 2 
-    if (((args["OTHERX"] - halfwidth) <= args["X"]) & (args["X"] <= (args["OTHERX"] + halfwidth)))
-        {
-    return 'true';
-        }
-        else
-        {
-    return 'false';
-        }
+    return Boolean(!!((args["OTHERX"] - halfwidth) <= args["X"]) & (args["X"] <= (args["OTHERX"] + halfwidth)))
     }
     ysquareboundscheck(args)
     {
     const halfheight = args["HEIGHT"] / 2 
-    if (((args["OTHERY"] - halfheight) <= args["Y"]) & (args["Y"] <= (args["OTHERY"] + halfheight)))
-        {
-    return 'true';
-        }
-        else
-        {
-    return 'false';
-        }
+   return Boolean(!!((args["OTHERY"] - halfheight) <= args["Y"]) & (args["Y"] <= (args["OTHERY"] + halfheight)))
     }
+    randomusingdifferentiator(args)
+    {
+    return Math.floor(Math.random() * ((args["VAL"] + args["DIFF"]) - (args["VAL"] - args["DIFF"]) + 1) + (args["VAL"] - args["DIFF"]));
+    }
+    randomusingnumstartingatzrero(args)
+    {
+       return Math.floor(Math.random() * (args["VAL"] - 0 + 1) + 0);
+    }
+    randomusingnum(args)
+    {
+        const num = Math.abs(args["VAL"]);
+    return Math.floor(Math.random() * (num - -num + 1) + -num);
+    }
+    delta() {
+        let now = Date.now();
+        let dt = now - this.lastUpdate;
+        this.lastUpdate = now;
+        return dt;
+    }
+    lerpdir(args)
+    {
+    return (args["CURDIR"] + ((args["DIRECTION"] - args["CURDIR"]) * args["SPEED"])) + ((args["OTHERX"] - args["X"]) /-8)
+    }
+    pi()
+    {
+    return (Math.PI);
+    }
+            flashbangimage(args) {
+            const image = document.createElement("img");
+            image.src = args["IMAGE"];
+            image.style.width = "100%";
+            image.style.height = "100%";
+            image.style.position = "absolute";
+            image.style.left = "-50%";
+            image.style.top = "-50%";
+            vm.renderer.addOverlay(image, "scale-centered");
+            this.fadeOutImage(image, args["SPEED"]);
+        }
+
+        fadeOutImage(image, speed) {
+            let opacity = 1;
+            const interval = setInterval(() => {
+                image.style.opacity = opacity;
+                opacity -= 0.007;
+                if (opacity <= 0) {
+                    clearInterval(interval);
+                    vm.renderer.removeOverlay(image);
+                    return;
+                }
+            }, speed);
+        }
   }
 
   Scratch.extensions.register(new CoolUtil());
