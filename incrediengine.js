@@ -1,3 +1,4 @@
+//new update
 //some updated beat timing was used from 4daengine which is used from beat sync
 
 (async function (Scratch) {
@@ -28,58 +29,13 @@
     "incredimodUtilsMODDED_eventLoop"
   ];
 
-  if (Scratch.gui) {
+    if (Scratch.gui) {
     Scratch.gui.getBlockly().then(SB => {
       const ogCheck = SB.scratchBlocksUtils.isShadowArgumentReporter;
       SB.scratchBlocksUtils.isShadowArgumentReporter = function(block) {
         if (ogCheck(block)) return true;
         return block.isShadow() && regenReporters.includes(block.type);
       };
-
-      function addGradientToBody() {
-        const grad = document.querySelector(`div[class="gradientCache"]`) || document.createElement("div");
-        grad.setAttribute("class", "gradientCache");
-        grad.innerHTML = `
-          ${grad.innerHTML}
-          <svg><defs>
-            <linearGradient x1="240" y1="0" x2="240" y2="150" gradientUnits="userSpaceOnUse" id="incredimodUtilsMODDED-GRAD">
-              <stop offset="0" stop-color="#929292"/>
-              <stop offset="1" stop-color="rgb(0, 0, 0)"/>
-            </linearGradient>
-          </defs></svg>`;
-        document.body.appendChild(grad);
-      }
-
-      addGradientToBody();
-
-      if (!SB?.SPgradients?.patched) {
-        SB.SPgradients = {
-          gradientUrls: new Map(),
-          patched: true
-        };
-        const ogBlockRender = SB.BlockSvg.prototype.render;
-
-        SB.BlockSvg.prototype.render = function(...args) {
-          const result = ogBlockRender.apply(this, args);
-          const extensionId = this.type.slice(0, this.type.indexOf("_"));
-          const grad = SB.SPgradients.gradientUrls.get(extensionId);
-
-          if (grad && this.svgPath_ && this.category_) {
-            const svg = this.svgPath_;
-            const fill = svg.getAttribute("fill");
-            const attr = fill === grad.check || fill === grad.path ? "fill" : "stroke";
-            this.svgPath_.setAttribute(attr, grad.path);
-          }
-          return result;
-        };
-      }
-
-      SB.SPgradients.gradientUrls.set("incredimodUtilsMODDED", {
-        path: "url(#incredimodUtilsMODDED-GRAD)",
-        check: "#929292"
-      });
-    }).catch(err => {
-      console.warn("Could not apply gradient styling:", err);
     });
   }
 
@@ -174,6 +130,11 @@
             this._beatPosition = this._totalBeats % 1
         }
 
+        loopsRunningBool()
+        {
+        return Boolean(this._loopRunning);
+        }
+
         _tick() {
             if (this._timerRunning) {
                 const ctx = this._getAudioCtx()
@@ -192,8 +153,6 @@
 
             if (elapsed >= totalSeconds) {
                 const carry          = elapsed % totalSeconds
-                this._loopPausedElapsed = 0
-                this._loopStartAudioTime = this._getAudioCtx().currentTime - carry
                 this.lastLoopProgress = 100
               this.triggerLoopEvent("whenLoopFinishes", data);
                 this._updateLoopTime()
@@ -208,11 +167,11 @@
             const newBar  = Math.floor(this._totalBeats / data.beatsPerBar)
 
             if (newBeat !== this.currentBeat) {
-                this.currentBeat = newBeat
+                this.currentBeat = (newBeat % data.beatsPerBar)
                 runtime.startHats('incredimodUtilsMODDED_whenBeat')
             }
             if (newBar !== this.currentBar) {
-                this.currentBar = newBar
+                this.currentBar = (newBar % data.bars)
                 runtime.startHats('incredimodUtilsMODDED_whenNewBar')
             }
 
@@ -223,9 +182,9 @@
       return {
         id: "incredimodUtilsMODDED",
         name: "IncrediEngine",
-        color1: "#929292",
-        color2: "#636363",
-        color3: "#464646",
+        color1: "#6b6b6b",
+        color2: "#575757",
+        color3: "#303030",
         menuIconURI: "data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI2NC45NTYzNCIgaGVpZ2h0PSI2NC45NTYzNCIgdmlld0JveD0iMCwwLDY0Ljk1NjM0LDY0Ljk1NjM0Ij48ZGVmcz48bGluZWFyR3JhZGllbnQgeDE9IjMyMCIgeTE9IjE0OS41MjE4MyIgeDI9IjMyMCIgeTI9IjIxMC40NzgxNyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJjb2xvci0xIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM5MjkyOTIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM0ZDRkNGQiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjg3LjUyMTgzLC0xNDcuNTIxODMpIj48ZyBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiPjxwYXRoIGQ9Ik0yODkuNTIxODMsMTgwYzAsLTE2LjgzMjYzIDEzLjY0NTU0LC0zMC40NzgxNyAzMC40NzgxNywtMzAuNDc4MTdjMTYuODMyNjMsMCAzMC40NzgxNywxMy42NDU1NCAzMC40NzgxNywzMC40NzgxN2MwLDE2LjgzMjYzIC0xMy42NDU1NCwzMC40NzgxNyAtMzAuNDc4MTcsMzAuNDc4MTdjLTE2LjgzMjYzLDAgLTMwLjQ3ODE3LC0xMy42NDU1NCAtMzAuNDc4MTcsLTMwLjQ3ODE3eiIgZmlsbD0idXJsKCNjb2xvci0xKSIgc3Ryb2tlLW9wYWNpdHk9IjAuNTAxOTYiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PHBhdGggZD0iTTMxMy4wOTA0OCwxOTguODA2MThjMS44MzY2OSwtMS44MzY2NyAxMC42MDY4MSwtMTAuNjA2ODEgMTEuNzU5NTQsLTExLjc1OTU0YzAuNTc3ODIsLTAuNTc3ODIgMS42MTU2NSwtMC4zODM5OSAxLjkxMzM3LC0wLjA4NjMyYzAuNDAwMDgsMC40MDAwOCAwLjY3Mjg3LDEuMzA1NTEgMC4wNTY3OSwxLjkyMTU5Yy0xLjE4NjE1LDEuMTg2MTUgLTEwLjA5NjQ1LDEwLjA5NjQ1IC0xMS44OTQzNiwxMS44OTQzNmMtMC41ODEwNCwwLjU4MTA2IC0xLjQ4MTUxLDAuMTQ5NDUgLTEuODA0NjcsLTAuMTczNzJjLTAuMzEwNTUsLTAuMzEwNTUgLTAuNTczNDIsLTEuMjUzNjMgLTAuMDMwNjMsLTEuNzk2NDN6IiBmaWxsPSIjZDlkOWQ5IiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMCIvPjxwYXRoIGQ9Ik0zMjQuOTY2OTUsMjAwLjcwODg4Yy0xLjgzNjY5LC0xLjgzNjY3IC0xMC42MDY3OSwtMTAuNjA2NzkgLTExLjc1OTU0LC0xMS43NTk1NGMtMC41Nzc4MiwtMC41Nzc4MiAtMC4zODM5OSwtMS42MTU2NyAtMC4wODYzMiwtMS45MTMzN2MwLjQwMDA4LC0wLjQwMDA4IDEuMzA1NTEsLTAuNjcyODggMS45MjE1OSwtMC4wNTY4YzEuMTg2MTUsMS4xODYxNSAxMC4wOTY0NSwxMC4wOTY0NSAxMS44OTQ0LDExLjg5NDRjMC41ODEwNCwwLjU4MTA2IDAuMTQ5NDUsMS40ODE1MSAtMC4xNzM3MiwxLjgwNDY1Yy0wLjMxMDU1LDAuMzEwNTUgLTEuMjUzNjMsMC41NzM0MiAtMS43OTY0MywwLjAzMDYzeiIgZmlsbD0iI2Q5ZDlkOSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjAiLz48cGF0aCBkPSJNMjk3LjA4MTY3LDE2OC43NzgxNWMwLjcxOTcyLDAgMy41NTc0OSwtMC4wODA2NiAzLjU1NzQ5LC0wLjA4MDY2YzAsMCAzLjQ2Mzg1LC0zLjY5NjM0IDQuNDMxMjIsLTQuNTQ4NjVjMC4zODI5MSwtMC4zMzczNiAwLjgwMTcyLC0wLjI3NTM4IDAuODAxNzIsMC40NDk3N2MwLDMuNDgzNDkgMCwxMy43NTU1NCAwLDE1LjY1MjU5YzAsMC41ODkzMyAtMC40MjA3NiwwLjY4MDc4IC0wLjc5NzM5LDAuMjk1NDRjLTAuOTE1MzcsLTAuOTM2NTcgLTQuNTg5MTYsLTQuNjk4MzIgLTQuNTg5MTYsLTQuNjk4MzJjMCwwIC0yLjYyMDU5LDAgLTMuMzk2MzMsMGMtMC4zOTAyMiwwIC0wLjk2MDM4LC0wLjQ4MDk4IC0wLjk2MDM4LC0wLjk3NDU4YzAsLTEuMzg2MjUgMCwtMy45ODI5MiAwLC00Ljg4MzM5YzAsLTAuNTU1NDUgMC41NDY3NSwtMS4yMTIxOSAwLjk1Mjg0LC0xLjIxMjE5eiIgZmlsbD0iI2Q5ZDlkOSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjAiLz48cGF0aCBkPSJNMzE0LjgyMzU3LDE3Ni42MTM1OWMtMS40MzI3LC0xLjQzMjcgLTQuODMzMzgsLTQuODMzNCAtNS43MzI1NywtNS43MzI1N2MtMC40NTA3NCwtMC40NTA3NCAtMC4yOTk1NSwtMS4yNjAzMSAtMC4wNjczNCwtMS40OTI1YzAuMzEyMDgsLTAuMzEyMDggMS4wMTgzOCwtMC41MjQ4OSAxLjQ5ODk1LC0wLjA0NDMxYzAuOTI1MjcsMC45MjUyNyA0LjQzNTI4LDQuNDM1MjggNS44Mzc3NCw1LjgzNzc0YzAuNDUzMjUsMC40NTMyNSAwLjExNjU4LDEuMTU1NjcgLTAuMTM1NTEsMS40MDc3NGMtMC4yNDIyNSwwLjI0MjI1IC0wLjk3NzksMC40NDcyNyAtMS40MDEzMiwwLjAyMzg3eiIgZmlsbD0iI2Q5ZDlkOSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjAiLz48cGF0aCBkPSJNMzA5LjE1ODk4LDE3Ni41ODk2OWMtMC4yNTIwOSwtMC4yNTIwOSAtMC41ODg3MywtMC45NTQ1IC0wLjEzNTUxLC0xLjQwNzc1YzEuNDAyNDksLTEuNDAyNDkgNC45MTI1LC00LjkxMjUgNS44Mzc3NCwtNS44Mzc3NGMwLjQ4MDU3LC0wLjQ4MDU4IDEuMTg2ODcsLTAuMjY3NzkgMS40OTg5NywwLjA0NDMxYzAuMjMyMjIsMC4yMzIyMiAwLjM4MzQxLDEuMDQxNzkgLTAuMDY3MzMsMS40OTI1MWMtMC44OTkxOSwwLjg5OTE5IC00LjI5OTg3LDQuMjk5OSAtNS43MzI1Nyw1LjczMjU3Yy0wLjQyMzQsMC40MjM0IC0xLjE1OTA2LDAuMjE4MzQgLTEuNDAxMzIsLTAuMDIzODd6IiBmaWxsPSIjZDlkOWQ5IiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMCIvPjxwYXRoIGQ9Ik0zMjcuNTg2ODcsMTgwLjA3NzEzYy0wLjU2MTksLTEuNTA4MjkgLTEuMTE0MzMsLTMuODk4NzcgLTEuNDQxOTcsLTQuNzc4MjJjLTAuMjQ5MDYsLTAuNjY4NTcgMC4zMzE0NCwtMS42ODM2NCAwLjc3NzQsLTEuODQ2NjRjMC4zNzU5NiwtMC4xMzc0NCAxLjM3MDYxLC0wLjQzMzMzIDEuMzcwNjEsLTAuNDMzMzNjMCwwIC0xLjEwNjUzLC00LjAxMDkyIDAuNDU0NiwtNi4yMzA1NmMwLjYyODY4LC0wLjg5Mzg1IDEuNTYyOTIsLTEuODQ5OTYgMi41MjI0OCwtMi4zMTAyOWMxLjg2NDE4LC0wLjg5NDM0IDQuMDExMjgsLTAuNjU5MjcgNC4wMTEyOCwtMC42NTkyN2wwLjEyMjA0LDEuNzI1MWMwLDAgLTIuMDM2OTUsLTAuMjI1MTUgLTMuNDkxNTMsMC42Nzc1MWMtMC44NDAyMywwLjUyMTQxIC0xLjY4NTIsMS41MDEyNSAtMS44NzEwOCwyLjY0NTM4Yy0wLjI4MzMxLDEuNzQzODEgMC4xMTAxOCwzLjc5NTc1IDAuMTEwMTgsMy43OTU3NWwxLjk4MDA2LDcuMzYwMjRjMCwwIC0xLjM0NTI3LDAuNDYxODYgLTIuNTg5NDQsMC43OTA2OGMtMS4xNDIxMSwwLjMwMTg0IC0xLjY1NjM2LDAuMDY0MiAtMS45NTQ1OSwtMC43MzYzNHoiIGZpbGw9IiNkOWQ5ZDkiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIwIi8+PHBhdGggZD0iTTM0Mi4zNjkzMSwxODAuMDc3MTNjLTAuMjk4MjUsMC44MDA1NCAtMC44MTI0NiwxLjAzODIgLTEuOTU0NTcsMC43MzYzNGMtMS4yNDQxOCwtMC4zMjg4MiAtMi41ODk0NSwtMC43OTA2OCAtMi41ODk0NSwtMC43OTA2OGwyLjE2MzgxLC03LjM2MDJjMCwwIDAuMjA5NzUsLTIuMDUxOTUgLTAuMDczNTYsLTMuNzk1NzZjLTAuMTg1OTEsLTEuMTQ0MTEgLTEuMDMwODUsLTIuMTIzOTYgLTEuODcxMDcsLTIuNjQ1MzhjLTEuNDU0NiwtMC45MDI2NiAtMy40MjkwNiwtMC42Nzc1MSAtMy40MjkwNiwtMC42Nzc1MWwwLjA1OTU0LC0xLjcyNTFjMCwwIDIuMTQ3MTEsLTAuMjM1MDggNC4wMTEyOCwwLjY1OTI3YzAuOTU5NTUsMC40NjAzNiAxLjg5MzgxLDEuNDE2NDUgMi41MjI0OCwyLjMxMDI5YzEuNTYxMTUsMi4yMTk2MiAwLjQ1NDYyLDYuMjMwNTUgMC40NTQ2Miw2LjIzMDU1YzAsMCAwLjk5NDY1LDAuMjk1ODggMS4zNzA1OSwwLjQzMzMxYzAuNDQ1OTcsMC4xNjMwMSAxLjAyNjQ4LDEuMTc4MDggMC43NzczOSwxLjg0NjY0Yy0wLjMyNzY0LDAuODc5NDYgLTAuODgwMDcsMy4yNjk5MiAtMS40NDE5Nyw0Ljc3ODIyeiIgZmlsbD0iI2Q5ZDlkOSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjAiLz48L2c+PC9nPjwvc3ZnPg==",
         blocks: [
           {
@@ -305,7 +264,7 @@
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: true,
             allowDropAnywhere: true,
-            text: "get property [KEY] of character ID [ID]",
+            text: "get custom property [KEY] of character ID [ID]",
             arguments: {
               KEY: { type: Scratch.ArgumentType.STRING, defaultValue: "color" },
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "char1" }
@@ -314,7 +273,7 @@
           {
             opcode: "setCharacterCustomProperty",
             blockType: Scratch.BlockType.COMMAND,
-            text: "set property [KEY] of character ID [ID] to [VALUE]",
+            text: "set custom property [KEY] of character ID [ID] to [VALUE]",
             arguments: {
               KEY: { type: Scratch.ArgumentType.STRING, defaultValue: "color" },
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "char1" },
@@ -324,7 +283,7 @@
           {
             opcode: "deleteCharacterCustomProperty",
             blockType: Scratch.BlockType.COMMAND,
-            text: "delete property [KEY] from character ID [ID]",
+            text: "delete custom property [KEY] from character ID [ID]",
             arguments: {
               KEY: { type: Scratch.ArgumentType.STRING, defaultValue: "color" },
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "char1" }
@@ -372,6 +331,11 @@
             arguments: {
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "char1" }
             }
+          },
+          {
+            opcode: "areAnyCharactersPlaced",
+            blockType: Scratch.BlockType.BOOLEAN,
+            text: "are any characters placed"
           },
           {
             opcode: "getAllCharacters",
@@ -490,7 +454,7 @@
           {
             opcode: "clearPoloOccupant",
             blockType: Scratch.BlockType.COMMAND,
-            text: "remove occupant from polo ID [ID]",
+            text: "remove character placed on polo ID [ID]",
             arguments: {
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "polo1" }
             }
@@ -785,6 +749,11 @@
           },
           "---",
           {
+            opcode: "loopsRunningBool",
+            blockType: Scratch.BlockType.BOOLEAN,
+            text: "are loops playing"
+          },
+          {
             opcode: "getCurrentLoop",
             blockType: Scratch.BlockType.REPORTER,
             text: "currently playing loop"
@@ -959,17 +928,13 @@
             acceptReporters: true,
             items: ["current volume", "max volume", "order"]
           },
-          POLO_PROPERTIES: {
-            acceptReporters: true,
-            items: ["occupant id", "occupied"]
-          },
           LOOP_PROPERTIES: {
             acceptReporters: true,
             items: ["id", "bpm", "bars", "beats per bar", "length in seconds", "beat length", "length in beats"]
           },
           MUTE_ACTIONS: {
             acceptReporters: false,
-            items: ["mute", "unmute"]
+            items: ["mute", "unmute", "toggle"]
           },
           SOLO_ACTIONS: {
             acceptReporters: false,
@@ -1106,8 +1071,14 @@
       const id = Cast.toString(args.ID);
       const char = this.characters.get(id);
       if (!char) return;
-
+      if (Cast.toString(args.ACTION) === "toggle")
+      {
+      char.muted = !char.muted;
+      }
+      else
+      {
       char.muted = Cast.toString(args.ACTION) === "mute";
+      }
     }
 
     characterExists(args) {
@@ -1399,6 +1370,14 @@ if (!args["ID"]) return;
         return makeArr(polos);
       }
     }
+
+    areAnyCharactersPlaced()
+    {
+      const polos = Array.from(this.polos.values())
+        .filter(polo => polo.occupant);
+        return Boolean((polos && polos.length > 0));
+
+    }
   
     getAllPlacedCharacters(args) {
       const format = Cast.toString(args.FORMAT);
@@ -1533,7 +1512,7 @@ for (const polo of this.polos.values()) {
 
     getCurrentBar() {
             this._updateLoopTime()
-            return (this._loopRunning) ? Math.max(0, Math.floor(this._totalBeats / (this.currentLoop?.beatsPerBar || 4))) : 0;
+            return (this._loopRunning) ? Math.max(0, Math.floor((this._totalBeats / (this.currentLoop?.bars || 4)) % (this.currentLoop?.bars || 4))) : 0;
     }
 
     getCurrentLoopPosition() {
