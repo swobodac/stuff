@@ -13,11 +13,7 @@ const urlToCheck = window.frames[0].location.href;
 const isBlacklisted = bannedDomains.some(domain => urlToCheck.includes(domain));
 
 if (isBlacklisted) {
-    console.log("yucky you")
-    txt = "SOMBRADIDERPWITHHISGIRLFRIENDS3TIMESDESPITEBEINGMINORS";
-while(1){
-    txt = txt += "shewas13sombra";
-}
+    throw new Error("You are playing a mod by a problematic person, please stop playing this.");
 }
 
   if (!Scratch.extensions.unsandboxed) 
