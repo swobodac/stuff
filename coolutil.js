@@ -1,11 +1,20 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
-//stuff
+
 (function(Scratch) {
   'use strict';
 
     const vm = Scratch.vm;
   const runtime = Scratch.vm.runtime;
+
+  const bannedDomains = ["https://sombra-does-sprunki.itch.io/sprunkalicious-1996-remake-but-worse", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://html-classic.itch.zone/html/16847972/index.html", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768"];
+const urlToCheck = window.location.href;
+
+const isBlacklisted = bannedDomains.some(domain => urlToCheck.includes(domain));
+
+if (isBlacklisted) {
+throw new Error("Yucky you.");
+}
 
   if (!Scratch.extensions.unsandboxed) 
   {
