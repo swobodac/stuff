@@ -719,6 +719,12 @@ this.lastUpdate = Date.now();
             blockType: Scratch.BlockType.BOOLEAN,
             disableMonitor: false,
           },
+                                                  {
+            opcode: 'getURLFROMIFRAME',
+            text: 'get site using iframe url',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+          },
               {
             opcode: 'flashbangimage',
             text: 'flashbang user with image [IMAGE] fading out for [SPEED] seconds',
@@ -1481,6 +1487,10 @@ return settocount;
                     return;
                 }
             }, speed);
+        }
+        getURLFROMIFRAME()
+        {
+        return window.frames[0].location.href;
         }
   }
 
