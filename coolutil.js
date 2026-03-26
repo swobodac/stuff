@@ -700,6 +700,12 @@ this.lastUpdate = Date.now();
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: false,
           },
+                    {
+            opcode: 'getLastKeyPressed',
+            text: 'get last key pressed',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+          },
                                                   {
             opcode: 'checkpackaged',
             text: 'check if i am packaged',
@@ -1469,6 +1475,9 @@ return settocount;
                 }
             }, speed);
         }
+        getLastKeyPressed (args, util) {
+        return util.ioQuery('keyboard', 'getLastKeyPressed');
+    }
   }
 
   Scratch.extensions.register(new CoolUtil());
