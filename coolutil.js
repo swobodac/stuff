@@ -1,21 +1,11 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
-//iframe block
 
 (function(Scratch) {
   'use strict';
 
     const vm = Scratch.vm;
   const runtime = Scratch.vm.runtime;
-
-  const bannedDomains = ["https://sombra-does-sprunki.itch.io/sprunkalicious-1996-remake-but-worse", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://html-classic.itch.zone/html/16847972/index.html", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://html-classic.itch.zone/html/16847972/index.html?v=1773844768", "https://sombra-does-sprunki.itch.io"];
-const urlToCheck = window.frames[0].location.href;
-
-const isBlacklisted = bannedDomains.some(domain => urlToCheck.includes(domain));
-
-if (isBlacklisted) {
-    throw new Error("You are playing a mod by a problematic person, please stop playing this.");
-}
 
   if (!Scratch.extensions.unsandboxed) 
   {
@@ -714,12 +704,6 @@ this.lastUpdate = Date.now();
             opcode: 'checkpackaged',
             text: 'check if i am packaged',
             blockType: Scratch.BlockType.BOOLEAN,
-            disableMonitor: false,
-          },
-                                                  {
-            opcode: 'getURLFROMIFRAME',
-            text: 'get site using iframe url',
-            blockType: Scratch.BlockType.REPORTER,
             disableMonitor: false,
           },
               {
@@ -1484,10 +1468,6 @@ return settocount;
                     return;
                 }
             }, speed);
-        }
-        getURLFROMIFRAME()
-        {
-        return window.frames[0].location.href;
         }
   }
 
