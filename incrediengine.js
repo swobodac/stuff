@@ -1,5 +1,6 @@
 //new update
 //some updated beat timing was used from 4daengine which is used from beat sync
+//ease of use update part 1
 
 (async function (Scratch) {
   "use strict";
@@ -254,6 +255,31 @@
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "char1" },
               VALUE: { type: Scratch.ArgumentType.NUMBER, defaultValue: 50 }
             }
+          },
+          {
+            opcode: "assignSpriteToCharacter",
+            blockType: Scratch.BlockType.COMMAND,
+            text: "assign sprite [SPRITES] to character with id [ID]",
+            arguments: {
+              SPRITES: { type: Scratch.ArgumentType.STRING, menu: "sprites" },
+              ID: { type: Scratch.ArgumentType.STRING, defaultValue: "char1" },
+            }
+          },
+          {
+            opcode: "getassignedCharacterfromSprite",
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            text: "get assigned character id from sprite [SPRITES]",
+            arguments: {
+              SPRITES: { type: Scratch.ArgumentType.STRING, menu: "sprites" }
+            }
+          },
+          {
+            opcode: "getassignedCharactercurSprite",
+            blockType: Scratch.BlockType.REPORTER,
+            filter: [Scratch.TargetType.SPRITE],
+            disableMonitor: true,
+            text: "get assigned character id from this sprite"
           },
           {
             blockType: Scratch.BlockType.LABEL,
@@ -955,9 +981,22 @@
           RESET: {
             acceptReporters: false,
             items: ["characters", "polos", "categorys"]
-          }
+          },
+          sprites: {
+acceptReporters: true,
+items: "getSpriteMenu"
+}
         }
       };
+    }
+
+                getSpriteMenu({}) {
+        let sprites = new Array();
+        for (let target of runtime.targets.filter(v => v !== vm.runtime._stageTarget)) {
+            if (!sprites.includes(target.sprite.name)) sprites.push(target.sprite.name)
+        }
+    if (sprites.length === 0)  return ["no sprites found"];
+        return sprites;
     }
 
     registerCharacter(args) {
@@ -1036,6 +1075,30 @@
           char.order = value;
           break;
       }
+    }
+
+    assignSpriteToCharacter(args)
+    {
+          const id = Cast.toString(args.ID);
+      const char = this.characters.get(id);
+      if (!char) return;
+      char.assignedSprite = Cast.toString(args.SPRITES);
+    }
+
+    getassignedCharactercurSprite(args, util)
+    {
+for (const value of this.characters.values()) {
+  if (value.assignedSprite === util.target.getName())
+return value.id;
+}
+    }
+
+        getassignedCharacterfromSprite(args)
+    {
+for (const value of this.characters.values()) {
+  if (value.assignedSprite === Cast.toString(args.SPRITES))
+return value.id;
+}
     }
 
     setCharacterCustomProperty(args) {
