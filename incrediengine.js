@@ -1,6 +1,6 @@
 //new update
 //some updated beat timing was used from 4daengine which is used from beat sync
-//ease of use update part 1
+//ease of use update part 2
 
 (async function (Scratch) {
   "use strict";
@@ -266,22 +266,6 @@
             }
           },
           {
-            opcode: "getassignedCharacterfromSprite",
-            blockType: Scratch.BlockType.REPORTER,
-            disableMonitor: true,
-            text: "get assigned character id from sprite [SPRITES]",
-            arguments: {
-              SPRITES: { type: Scratch.ArgumentType.STRING, menu: "sprites" }
-            }
-          },
-          {
-            opcode: "getassignedCharactercurSprite",
-            blockType: Scratch.BlockType.REPORTER,
-            filter: [Scratch.TargetType.SPRITE],
-            disableMonitor: true,
-            text: "get assigned character id from this sprite"
-          },
-          {
             blockType: Scratch.BlockType.LABEL,
             text: "Custom Properties"
           },
@@ -357,6 +341,22 @@
             arguments: {
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "char1" }
             }
+          },
+          {
+            opcode: "getassignedCharacterfromSprite",
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            text: "get assigned character id from sprite [SPRITES]",
+            arguments: {
+              SPRITES: { type: Scratch.ArgumentType.STRING, menu: "sprites" }
+            }
+          },
+          {
+            opcode: "getassignedCharactercurSprite",
+            blockType: Scratch.BlockType.REPORTER,
+            filter: [Scratch.TargetType.SPRITE],
+            disableMonitor: true,
+            text: "get assigned character id from this sprite"
           },
           {
             opcode: "areAnyCharactersPlaced",
@@ -488,7 +488,7 @@
           {
             opcode: "replaceCharacterOnPolo",
             blockType: Scratch.BlockType.COMMAND,
-            text: "replace character on polo [POLO] with [CHARACTER]",
+            text: "(NOT RECOMMENDED) replace character on polo [POLO] with [CHARACTER]",
             arguments: {
               POLO: { type: Scratch.ArgumentType.STRING, defaultValue: "polo1" },
               CHARACTER: { type: Scratch.ArgumentType.STRING, defaultValue: "char2" }
@@ -566,8 +566,8 @@
             opcode: "whenCharacterReplaced",
             blockType: Scratch.BlockType.HAT,
             isEdgeActivated: false,
-            hideFromPalette: true,
-            text: "when character is replaced [CHARACTER]",
+           hideFromPalette: true,
+            text: "(NOT RECOMMENDED) when character is replaced [CHARACTER]",
             arguments: {
               CHARACTER: {}
             }
@@ -617,7 +617,7 @@
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: true,
             allowDropAnywhere: true,
-            text: "get property [KEY] of polo ID [ID]",
+            text: "get custom property [KEY] of polo ID [ID]",
             arguments: {
               KEY: { type: Scratch.ArgumentType.STRING, defaultValue: "position" },
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "polo1" }
@@ -626,7 +626,7 @@
           {
             opcode: "setPoloCustomProperty",
             blockType: Scratch.BlockType.COMMAND,
-            text: "set property [KEY] of polo ID [ID] to [VALUE]",
+            text: "set custom property [KEY] of polo ID [ID] to [VALUE]",
             arguments: {
               KEY: { type: Scratch.ArgumentType.STRING, defaultValue: "position" },
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "polo1" },
@@ -636,7 +636,7 @@
           {
             opcode: "deletePoloCustomProperty",
             blockType: Scratch.BlockType.COMMAND,
-            text: "delete property [KEY] from polo ID [ID]",
+            text: "delete custom property [KEY] from polo ID [ID]",
             arguments: {
               KEY: { type: Scratch.ArgumentType.STRING, defaultValue: "position" },
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "polo1" }
@@ -756,6 +756,15 @@
               LOOP: { type: Scratch.ArgumentType.EMPTY }
             }
           },
+          {
+            opcode: "getLoopPropertyfromCurrentLoop",
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            text: "get [PROPERTY] of current loop",
+            arguments: {
+              PROPERTY: { type: Scratch.ArgumentType.STRING, menu: "LOOP_PROPERTIES" }
+            }
+        },
           "---",
           {
             opcode: "startLoop",
@@ -944,11 +953,11 @@
         menus: {
           CHAR_PROPERTIES: {
             acceptReporters: true,
-            items: ["category", "placed", "singing", "muted", "current volume", "true volume", "max volume", "order", "page", "polo", "last polo"]
+            items: ["category", "assigned sprite", "placed", "singing", "muted", "current volume", "true volume", "max volume", "order", "page", "polo", "last polo"]
           },
           CHAR_EVENT_PROPERTIES: {
             acceptReporters: true,
-            items: ["id", "category","placed", "singing", "muted", "current volume", "true volume", "max volume", "order", "page", "polo", "last polo"]
+            items: ["id", "category", "assigned sprite", "placed", "singing", "muted", "current volume", "true volume", "max volume", "order", "page", "polo", "last polo"]
           },
           CHAR_SET_PROPERTIES: {
             acceptReporters: true,
@@ -1043,7 +1052,8 @@ items: "getSpriteMenu"
         case "id": return char.id;
         case "category": return char.category;
         case "order": return char.order;
- case "page": return char.page || 0;
+        case "assigned sprite": return char.assignedSprite || "";
+        case "page": return char.page || 0;
         case "current volume": return (char.currentVolume * (char.maxVolume / 100));
         case "max volume": return char.maxVolume;
         case "true volume": return char.currentVolume;
@@ -1082,6 +1092,7 @@ items: "getSpriteMenu"
           const id = Cast.toString(args.ID);
       const char = this.characters.get(id);
       if (!char) return;
+      if (Cast.toString(args.SPRITES) === "no sprites found") return;
       char.assignedSprite = Cast.toString(args.SPRITES);
     }
 
@@ -1501,6 +1512,27 @@ if (!args["ID"]) return;
       }
     }
 
+    getLoopPropertyfromCurrentLoop(args)
+    {
+      try {
+        const loopData = this.currentLoop;
+        const prop = Cast.toString(args.PROPERTY);
+    
+        switch (prop) {
+          case "id": return loopData.id || "";
+          case "bpm": return loopData.bpm || 0;
+          case "bars": return loopData.bars || 0;
+          case "beats per bar": return loopData.beatsPerBar || 0;
+          case "length in seconds": return loopData.lengthInSeconds || 0;
+          case "beat length": return loopData.beatLength || 0;
+          case "length in beats": return loopData.lengthInBeats || 0;
+          default: return "";
+        }
+      } catch {
+        return "";
+      }
+    }
+
     getlastupdated(args)
     {
           try {
@@ -1814,6 +1846,7 @@ for (const polo of this.polos.values()) {
       switch (prop) {
         case "id": return data.id || "";
         case "category": return data.category || "";
+        case "assigned sprite": return data.assignedSprite || "";
         case "order": return data.order || 0;
         case "page": return data.page || 0;
         case "max volume": return data.maxVolume || 0;
