@@ -207,10 +207,20 @@
             text: "register character ID [ID] category [CATEGORY] order [ORDER] max volume [VOLUME] in icon page [PAGE]",
             arguments: {
               ID: { type: Scratch.ArgumentType.STRING, defaultValue: "char1" },
-              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "beat" },
+              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "Beats" },
               ORDER: { type: Scratch.ArgumentType.NUMBER, defaultValue: 1 },
               VOLUME: { type: Scratch.ArgumentType.NUMBER, defaultValue: 100 },
               PAGE: { type: Scratch.ArgumentType.NUMBER, defaultValue: 1 },
+            }
+          },
+          {
+            opcode: "categoryDropdown",
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            allowDropAnywhere: true,
+            text: "category [MENU]",
+            arguments: {
+              MENU: { type: Scratch.ArgumentType.STRING, menu: "CATEGORIES" },
             }
           },
           {
@@ -386,7 +396,7 @@
             allowDropAnywhere: true,
             text: "all characters in [CATEGORY] in page [PAGE] as [FORMAT]",
             arguments: {
-              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "beat" },
+              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "Beats" },
               FORMAT: { type: Scratch.ArgumentType.STRING, menu: "LIST_FORMAT" },
               PAGE: { type: Scratch.ArgumentType.NUMBER, defaultValue: 1 }
             }
@@ -398,7 +408,7 @@
             allowDropAnywhere: true,
             text: "all characters in [CATEGORY] in page [PAGE] by order as [FORMAT]",
             arguments: {
-              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "beat" },
+              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "Beats" },
               FORMAT: { type: Scratch.ArgumentType.STRING, menu: "LIST_FORMAT" },
               PAGE: { type: Scratch.ArgumentType.NUMBER, defaultValue: 1 }
             }
@@ -704,7 +714,7 @@
             blockType: Scratch.BlockType.COMMAND,
             text: "register category [CATEGORY]",
             arguments: {
-              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "custom" }
+              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "Custom" }
             }
           },
           {
@@ -712,7 +722,7 @@
             blockType: Scratch.BlockType.COMMAND,
             text: "delete category [CATEGORY]",
             arguments: {
-              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "custom" }
+              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "Custom" }
             }
           },
           {
@@ -720,7 +730,7 @@
             blockType: Scratch.BlockType.BOOLEAN,
             text: "category [CATEGORY] exists?",
             arguments: {
-              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "beat" }
+              CATEGORY: { type: Scratch.ArgumentType.STRING, defaultValue: "Beats" }
             }
           },
           {
@@ -995,6 +1005,10 @@
           RESET: {
             acceptReporters: false,
             items: ["characters", "polos", "categorys"]
+          },
+          CATEGORIES: {
+            acceptReporters: false,
+            items: ["Beats", "Effects", "Melodies", "Voices", "Bonuses"]
           },
           sprites: {
 acceptReporters: true,
