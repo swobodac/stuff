@@ -224,6 +224,16 @@
             }
           },
           {
+            opcode: "legacyCategoryDropdown",
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            allowDropAnywhere: true,
+            text: "legacy category [MENU]",
+            arguments: {
+              MENU: { type: Scratch.ArgumentType.STRING, menu: "LEGACYCATEGORIES" },
+            }
+          },
+          {
             opcode: "deleteCharacter",
             blockType: Scratch.BlockType.COMMAND,
             text: "delete character ID [ID]",
@@ -1008,7 +1018,11 @@
           },
           CATEGORIES: {
             acceptReporters: false,
-            items: ["Beats", "Effects", "Melodies", "Voices", "Bonuses"]
+            items: ["None", "Beats", "Effects", "Melodies", "Voices", "Bonuses"]
+          },
+          LEGACYCATEGORIES: {
+            acceptReporters: false,
+            items: ["None", "beat", "effect", "melody", "voice"]
           },
           sprites: {
 acceptReporters: true,
@@ -1049,6 +1063,16 @@ items: "getSpriteMenu"
         previousMuteState: false,
         customProps: {}
       });
+    }
+
+    categoryDropdown(args)
+    {
+    return Cast.toString(args.MENU);
+    }
+
+        legacyCategoryDropdown(args)
+    {
+    return Cast.toString(args.MENU);
     }
 
     deleteCharacter(args) {
