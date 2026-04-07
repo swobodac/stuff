@@ -1,6 +1,5 @@
 //new update
 //some updated beat timing was used from 4daengine which is used from beat sync
-//ease of use update part 2
 
 (async function (Scratch) {
   "use strict";
@@ -362,6 +361,12 @@
             opcode: "areAnyCharactersPlaced",
             blockType: Scratch.BlockType.BOOLEAN,
             text: "are any characters placed"
+          },
+          {
+            opcode: "amountofcharactersplaced",
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+            text: "amount of placed characters"
           },
           {
             opcode: "getAllCharacters",
@@ -1463,6 +1468,13 @@ if (!args["ID"]) return;
       } else {
         return makeArr(characters.map(polo => this.characters.get(polo.occupant)));
       }
+    }
+
+    amountofcharactersplaced()
+    {
+            const characters = Array.from(this.polos.values())
+        .filter(polo => polo.occupant);
+    return characters.length
     }
 
     getAllPolos(args) {
