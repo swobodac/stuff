@@ -1018,11 +1018,11 @@
           },
           CATEGORIES: {
             acceptReporters: false,
-            items: ["None", "Beats", "Effects", "Melodies", "Voices", "Bonuses"]
+            items: ["None", "Beats", "Effects", "Melodies", "Voices", "Bonuses", "Extras"]
           },
           LEGACYCATEGORIES: {
             acceptReporters: false,
-            items: ["None", "beat", "effect", "melody", "voice"]
+            items: ["None", "beat", "effect", "melody", "voice", "bonus", "extra"]
           },
           sprites: {
 acceptReporters: true,
