@@ -1,6 +1,6 @@
 //new update
 //some updated beat timing was used from 4daengine which is used from beat sync
-
+//updated how singing starts
 (async function (Scratch) {
   "use strict";
   if (!Scratch.extensions.unsandboxed) {
@@ -1612,6 +1612,12 @@ if (!args["ID"]) return;
             startLoopInternal(data) {
             const ctx = this._getAudioCtx()
             this.currentLoop      = data
+for (const polo of this.polos.values()) {
+        if (polo && polo.occupant !== null) {
+        let char = this.characters.get(polo.occupant)
+          char.singing = true;
+        }
+      }
             this.currentBeat      = -1
             this.currentBar       = -1
             this.lastLoopProgress = 0
@@ -1621,12 +1627,6 @@ if (!args["ID"]) return;
             this._loopStartAudioTime = ctx.currentTime
             this._totalBeats      = 0
             this._beatPosition    = 0
-for (const polo of this.polos.values()) {
-        if (polo && polo.occupant !== null) {
-        let char = this.characters.get(polo.occupant)
-          char.singing = true;
-        }
-      }
         this.triggerLoopEvent("whenLoopStarts", data);
         }
 
