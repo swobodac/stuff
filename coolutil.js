@@ -1,11 +1,13 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
+//more runtime stuff
 
 (function(Scratch) {
   'use strict';
 
     const vm = Scratch.vm;
   const runtime = Scratch.vm.runtime;
+  
 
   if (!Scratch.extensions.unsandboxed) 
   {
@@ -16,6 +18,7 @@ throw new Error("Cool Utilies works better if your running it unsandboxed!");
 constructor()
 {
 this.lastUpdate = Date.now();
+Scratch.vm.runtime.registerCompiledExtensionBlocks("coolstuff", this.getCompileInfo());
 }
     getInfo() {
       return {
@@ -40,7 +43,7 @@ this.lastUpdate = Date.now();
                     {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
-        text: `Math`,
+        text: `Math & Operations`,
     },
                     {   
         blockType: Scratch.BlockType.LABEL,
@@ -227,6 +230,45 @@ this.lastUpdate = Date.now();
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: false,
           },
+
+                              {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Operations`,
+    },
+    {
+          opcode: "orIfFalsey",
+          text: "[ONE] or else [TWO]",
+          blockType: Scratch.BlockType.REPORTER,
+          allowDropAnywhere: true,
+          disableMonitor: true,
+          arguments: {
+            ONE: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "a"
+            },
+            TWO: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "b"
+            }
+          }
+        },
+        {
+          opcode: "ifIsTruthy",
+          text: "if [ONE] is true then [TWO]",
+          blockType: Scratch.BlockType.REPORTER,
+          allowDropAnywhere: true,
+          disableMonitor: true,
+          arguments: {
+            ONE: {
+              type: Scratch.ArgumentType.BOOLEAN
+            },
+            TWO: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "perfect!"
+            }
+          }
+        },
                         {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
@@ -688,6 +730,47 @@ this.lastUpdate = Date.now();
         hideFromPalette: false,
         text: `Sprites, Project & Variable Counters`,
     },
+              {
+            opcode: 'updateRuntimeConfig',
+            text: 'set [OPTION] to [ENABLED]',
+            blockType: Scratch.BlockType.COMMAND,
+            disableMonitor: true,
+       arguments: {
+                OPTION: {
+                type: Scratch.ArgumentType.STRING,
+                menu: 'runtimeConfig'
+        },
+                ENABLED: {
+                type: Scratch.ArgumentType.STRING,
+                menu: 'TrueFalse'
+        }
+      }
+          },
+                                {
+            opcode: 'getAll',
+            text: 'get all [MENU] in an array',
+            blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
+            disableMonitor: true,
+        arguments: {
+            MENU: {
+                type: Scratch.ArgumentType.STRING,
+                menu: 'getMenu'
+            },
+    }
+          },
+                                {
+            opcode: 'getStage',
+            text: 'get stage [MENU]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+        arguments: {
+            MENU: {
+                type: Scratch.ArgumentType.STRING,
+                menu: 'stageMenu'
+            },
+    }
+          },
     {
             opcode: 'spriteName',
             text: 'get sprite name',
@@ -973,11 +1056,35 @@ this.lastUpdate = Date.now();
             acceptReporters: true,
             items: ['format', 'sample rate', 'sample count']
           },
+ getMenu: {
+            acceptReporters: true,
+            items: ['costumes', 'sounds', 'sprites']
+          },
  variables: {
             acceptReporters: true,
             items: "getVariables"
           },
-
+stageMenu: {
+            acceptReporters: true,
+            items: ['width', 'height']
+},
+                runtimeConfig: {
+                    acceptReporters: true,
+                    items: [
+                        "turbo mode",
+                        "high quality pen",
+                        "offscreen sprites",
+                        "remove miscellaneous limits",
+                        "disable offscreen rendering",
+                        "disable direction clamping",
+                        "interpolation",
+                        "warp timer"
+                    ]
+                },
+                TrueFalse: {
+            acceptReporters: true,
+            items: ['true', 'false']
+},
 sprites: {
 acceptReporters: true,
 items: "getSpriteMenu"
@@ -985,6 +1092,43 @@ items: "getSpriteMenu"
 }
       };
     }
+
+     getCompileInfo() {
+    return {
+      ir: {
+        orIfFalsey: (generator, block) => ({
+          kind: "input",
+          one: generator.descendInputOfBlock(block, "ONE"),
+          two: generator.descendInputOfBlock(block, "TWO")
+        }),
+        ifIsTruthy: (generator, block) => ({
+          kind: "input",
+          one: generator.descendInputOfBlock(block, "ONE"),
+          two: generator.descendInputOfBlock(block, "TWO"),
+        })
+      },
+      js: {
+        orIfFalsey: (node, compiler, {
+          TypedInput,
+          TYPE_UNKNOWN
+        }) => {
+          const num1 = compiler.descendInput(node.one).asUnknown();
+          const num2 = compiler.descendInput(node.two).asUnknown();
+
+          return new TypedInput(`(${num1} || ${num2})`, TYPE_UNKNOWN);
+        },
+        ifIsTruthy: (node, compiler, {
+          TypedInput,
+          TYPE_UNKNOWN
+        }) => {
+          const num1 = compiler.descendInput(node.one).asBoolean();
+          const num2 = compiler.descendInput(node.two).asUnknown();
+
+          return new TypedInput(`(${num1} && ${num2})`, TYPE_UNKNOWN);
+        }
+      }
+    };
+  }
 
 //i had to take ts from storage + since penguinmod ext api so confusing:sob:
             async creditsModal() {
@@ -1054,6 +1198,13 @@ return "";
       return variable ? variable.id : "";
     }
     
+    //Compiled Blocks holy crappp
+orIfFalsey(args) {
+ return "" 
+}
+  ifIsTruthy(args) { 
+    return "" 
+}
 
     //Block Functions yay
     centerusingdistance(args){
@@ -1477,6 +1628,48 @@ return settocount;
         }
         getLastKeyPressed (args, util) {
         return util.ioQuery('keyboard', 'getLastKeyPressed');
+    }
+//taken from runtime
+
+getAll(args, util)
+{
+    switch (args.MENU) {
+    case 'sprites':
+        const run = Scratch.vm.runtime;
+return JSON.stringify(run.targets.filter(target => target.isOriginal && !target.isStage).map(target => target.sprite.name));
+    case 'costumes':
+        const costumes = util.target.getCostumes();
+        return JSON.stringify(costumes.map(costume => costume.name));
+    case 'sounds':
+        const sounds = util.target.getSounds();
+        return JSON.stringify(sounds.map(sound => sound.name));
+}
+}
+
+getStage(args)
+{
+    switch (args.MENU) {
+        case 'width':
+return  Scratch.vm.runtime.stageWidth;
+        case 'height':
+return  Scratch.vm.runtime.stageHeight;
+    }
+}
+
+    updateRuntimeConfig(args) {
+        const vm = Scratch.vm;
+        const runtime = Scratch.vm.runtime;
+        const enabled = Scratch.Cast.toString(args.ENABLED).toLowerCase() === 'true';
+        switch (Scratch.Cast.toString(args.OPTION).toLowerCase()) {
+        case 'turbo mode': return vm.setTurboMode(enabled);
+        case "high quality pen": return runtime.renderer.setUseHighQualityRender(enabled);
+        case "offscreen sprites": return runtime.setRuntimeOptions({ fencing: !enabled });
+        case "remove miscellaneous limits": return runtime.setRuntimeOptions({ miscLimits: !enabled });
+        case "disable offscreen rendering": return runtime.setRuntimeOptions({ disableOffscreenRendering: enabled });
+        case "disable direction clamping": return runtime.setRuntimeOptions({ disableDirectionClamping: enabled });
+        case "interpolation": return vm.setInterpolation(enabled);
+        case "warp timer": return this.runtime.setCompilerOptions({ warpTimer: enabled });
+        }
     }
   }
 
