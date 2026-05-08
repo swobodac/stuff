@@ -1,6 +1,6 @@
 //ts has a lot of crap stolen from other pm extenstions like looks expanded, runtime, etc because i kinda suck at js:sob:
 //managed to figure out some functions using dinobuilder & other pm extenstions :)
-//more runtime stuff
+//2 new blocks
 
 (function(Scratch) {
   'use strict';
