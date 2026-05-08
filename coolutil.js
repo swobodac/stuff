@@ -269,6 +269,26 @@ Scratch.vm.runtime.registerCompiledExtensionBlocks("coolstuff", this.getCompileI
             }
           }
         },
+{
+          opcode: "joinIfTrue",
+          text: "[MAIN] joined with [JOINSTRING] if [BOOLEAN] is true",
+          blockType: Scratch.BlockType.REPORTER,
+          allowDropAnywhere: true,
+          disableMonitor: true,
+          arguments: {
+            BOOLEAN: {
+              type: Scratch.ArgumentType.BOOLEAN
+            },
+            MAIN: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "apple"
+            },
+            JOINSTRING: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "banana"
+            }
+          }
+        },
                         {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
@@ -945,6 +965,30 @@ Scratch.vm.runtime.registerCompiledExtensionBlocks("coolstuff", this.getCompileI
         },
     }
           },
+            {
+            opcode: 'cubeEngineLoopProgress',
+            text: 'get cube engine styled loop progress using loop id [LOOPID] loop time [LOOPTIME] loop amount [LOOPAMOUNT] & timer [TIMER]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        LOOPID: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 1,
+        },
+        LOOPAMOUNT: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 2,
+        },
+        LOOPTIME: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 8,
+        },
+                TIMER: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+    }
+          },
                       {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
@@ -1207,6 +1251,16 @@ orIfFalsey(args) {
 }
 
     //Block Functions yay
+      joinIfTrue(args) { 
+        if (Boolean(args["BOOLEAN"]))
+        {
+    return args["MAIN"] + args["JOINSTRING"];
+        }
+        else
+        {
+            return args["MAIN"];
+        }
+}
     centerusingdistance(args){
     const amountofitems = args["AMOUNT"];
     const distance = args["DIST"];
@@ -1628,6 +1682,11 @@ return settocount;
         }
         getLastKeyPressed (args, util) {
         return util.ioQuery('keyboard', 'getLastKeyPressed');
+    }
+
+    cubeEngineLoopProgress(args)
+    {
+    return ((args["TIMER"] / args["LOOPTIME"] + (args["LOOPID"] - 1)) / args["LOOPAMOUNT"]) * 100;
     }
 //taken from runtime
 
