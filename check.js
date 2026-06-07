@@ -1,6 +1,7 @@
 //unfinished blacklist for new extention
 
 (async () => {
+console.log('making sure im running gng')
 const blacklistedLinks = ['https://connergamer.itch.io' 'connergamer.itch.io'];
 
 const isBlacklisted = (blacklistedLinks.some(link => (document.referrer).startsWith(link)));
