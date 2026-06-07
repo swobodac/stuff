@@ -1046,7 +1046,7 @@ switch (args['directionMenu']) {
 
     mapValue(args)
     {
-    return args['minOutput'] + ((args['maxOutput']- args['minOutput']) * ((args['value'] - args['minInput']) / (args['maxInput']- args['minInput']))) || args['value'];
+    return args['minOutput'] + ((args['maxOutput']- args['minOutput']) * ((args['value'] - args['minInput']) / (args['maxInput']- args['minInput']))) || 0;
     }
 
     sinCosScript(args)
