@@ -1,4 +1,4 @@
-//unfinished blacklist for new extention
+//unfinished blacklist for new extention ig
 
 (async () => {
 console.log('making sure im running gng')
