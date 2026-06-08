@@ -1,4 +1,3 @@
-//small update
 (function(Scratch) {
     'use strict'
 
@@ -1790,8 +1789,8 @@
             this.currentLoop = data
 
             for (const c of JSON.parse(this.getAllPlacedCharacterIDs())) {
-            data = this.findCharacterWithoutPageInput(c)
-            data.singing = true;
+            charData = this.findCharacterWithoutPageInput(c)
+            charData.singing = true;
             }
 
             this.currentBeat = -1
@@ -1917,14 +1916,7 @@
         eventLoop({}, util) {
             const data = util.thread[EventKey]
             if (!data) return getDogeiscutObject().Type.blank
-
-            const totalBeats = data.bars * data.beatsPerBar
-            const lengthSeconds = parseFloat(((totalBeats * 60) / (data.bpm || 120)).toFixed(3))
-            return toObj({
-                ...data,
-                lengthInBeats: totalBeats,
-                lengthInSeconds: lengthSeconds
-            })
+            return toObj({data})
         }
 
         eventCharacter({}, util) {
