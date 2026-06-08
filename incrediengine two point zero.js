@@ -1,3 +1,4 @@
+//small small update & bugfix
 (function(Scratch) {
     'use strict'
 
@@ -1787,6 +1788,7 @@
         _startLoopInternal(data) {
             const ctx = this._getAudioCtx()
             this.currentLoop = data
+            let charData = {};
 
             for (const c of JSON.parse(this.getAllPlacedCharacterIDs())) {
             charData = this.findCharacterWithoutPageInput(c)
