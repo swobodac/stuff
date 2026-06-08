@@ -1,4 +1,3 @@
-//small small update & bugfix
 (function(Scratch) {
     'use strict'
 
@@ -1805,7 +1804,7 @@
             this._totalBeats = 0
             this._beatPosition = 0
             this.resetTimer()
-            this._triggerLoopEvent('whenLoopStarts', data)
+            this._triggerLoopEvent('whenLoopStarts', (data.data))
         }
 
         stopLoops() {
