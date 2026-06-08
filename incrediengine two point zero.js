@@ -505,6 +505,13 @@
                         },
                     },
                     {
+                        opcode: 'getAllCharacterIDsFromAllPages',
+                        blockType: Scratch.BlockType.REPORTER,
+                        blockShape: Scratch.BlockShape.SQUARE,
+                        allowDropAnywhere: true,
+                        text: 'all character IDs',
+                    },
+                    {
                         opcode: 'getAllPlacedCharacterIDs',
                         blockType: Scratch.BlockType.REPORTER,
                         blockShape: Scratch.BlockShape.SQUARE,
@@ -1444,6 +1451,21 @@
             catch (e)
             {
             arr = []
+            }
+            return makeArr(arr);
+        }
+
+            getAllCharacterIDsFromAllPages() {
+            let arr = [];
+            try
+            {
+        this.characters.forEach((value, key, set) => {
+            arr.push(...Object.keys(value));
+        });
+            }
+            catch (e)
+            {
+            alert(e)
             }
             return makeArr(arr);
         }
