@@ -1,4 +1,4 @@
-//more bugfixes ig
+//event loop block fixed
 (function(Scratch) {
     'use strict'
 
@@ -1918,7 +1918,7 @@
         eventLoop({}, util) {
             const data = util.thread[EventKey]
             if (!data) return getDogeiscutObject().Type.blank
-            return toObj({data})
+            return toObj(data)
         }
 
         eventCharacter({}, util) {
