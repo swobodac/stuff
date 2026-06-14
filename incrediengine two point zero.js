@@ -1,4 +1,4 @@
-//event loop block fixed
+//small update
 (function(Scratch) {
     'use strict'
 
@@ -237,7 +237,7 @@
                         arguments: {
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             },
                             CATEGORY: {
                                 type: Scratch.ArgumentType.STRING,
@@ -277,7 +277,7 @@
                         arguments: {
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             }
                         }
                     },
@@ -288,7 +288,7 @@
                         arguments: {
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             }
                         }
                     },
@@ -305,7 +305,7 @@
                             },
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             }
                         }
                     },
@@ -320,7 +320,7 @@
                             },
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             },
                             VALUE: {
                                 type: Scratch.ArgumentType.NUMBER,
@@ -339,7 +339,7 @@
                             },
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             },
                             VALUE: {
                                 type: Scratch.ArgumentType.STRING,
@@ -360,7 +360,7 @@
                             },
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             }
                         },
                         allowDropAnywhere: true
@@ -376,7 +376,7 @@
                             },
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             },
                             SPRITE: {
                                 type: Scratch.ArgumentType.STRING,
@@ -410,7 +410,7 @@
                         arguments: {
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             }
                         }
                     },
@@ -426,7 +426,7 @@
                             },
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             }
                         }
                     },
@@ -441,7 +441,7 @@
                             },
                             ID: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             },
                             UNSOLO_MODE: {
                                 type: Scratch.ArgumentType.STRING,
@@ -562,7 +562,7 @@
                         arguments: {
                             CHARACTER: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             },
                             SLOT: {
                                 type: Scratch.ArgumentType.STRING,
@@ -592,7 +592,7 @@
                         arguments: {
                             CHARACTER: {
                                 type: Scratch.ArgumentType.STRING,
-                                defaultValue: 'polo'
+                                defaultValue: 'character'
                             }
                         }
                     },
@@ -816,6 +816,18 @@
                                 shape: Scratch.BlockShape.PLUS,
                                 type: Scratch.ArgumentType.ANY,
                                 defaultValue: '',
+                            }
+                        }
+                    },
+                    {
+                        opcode: 'getFromCurrentLoop',
+                        blockType: Scratch.BlockType.REPORTER,
+                        allowDropAnywhere: true,
+                        text: '[PROPERTY] of current loop',
+                        arguments: {
+                            PROPERTY: {
+                                type: Scratch.ArgumentType.STRING,
+                                menu: 'LOOP_PROPS'
                             }
                         }
                     },
@@ -1805,7 +1817,7 @@
             this._totalBeats = 0
             this._beatPosition = 0
             this.resetTimer()
-            this._triggerLoopEvent('whenLoopStarts', this.currentLoop)
+            this._triggerLoopEvent('whenLoopStarts', data)
         }
 
         stopLoops() {
@@ -2020,6 +2032,31 @@
         default:
         return '';
         }
+        }
+
+        getFromCurrentLoop({
+            PROPERTY
+        }) {
+            const data = this._parseLoop(this.currentLoop)
+            if (!data) return ''
+            switch (Cast.toString(PROPERTY)) {
+                case 'id':
+                    return data.id ?? ''
+                case 'bpm':
+                    return data.bpm ?? 0
+                case 'bars':
+                    return data.bars ?? 0
+                case 'beats per bar':
+                    return data.beatsPerBar ?? 0
+                case 'length per beat':
+                    return data.lengthPerBeat ?? 0 
+                case 'length in beats':
+                    return data.lengthInBeats ?? 0
+                case 'length in seconds': 
+                    return data.lengthInSeconds ?? 0
+                default:
+                    return ''
+            }
         }
 
 }Scratch.extensions.register(new IncrediEngine2point0())
