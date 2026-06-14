@@ -1292,7 +1292,7 @@
             VALUE = Cast.toNumber(VALUE)
             switch (Cast.toString(PROPERTY)) {
                 case 'current volume':
-                    char.currentVolume = Math.max(0, Math.min(VALUE, char.maxVolume));
+                    char.currentVolume = Math.max(0, Math.min(VALUE, 100));
                     break
                 case 'max volume':
                     char.maxVolume = Math.max(0, VALUE);
