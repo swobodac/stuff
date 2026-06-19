@@ -1,4 +1,4 @@
-//another itty bitty bug fix
+//removed a block :(
 (function(Scratch) {
   'use strict';
   
@@ -965,6 +965,7 @@ const Cast = Scratch.Cast;
             blockShape: Scratch.BlockShape.SQUARE,
             disableMonitor: true,
 	    allowDropAnywhere: true,
+            hideFromPalette: true,
       arguments: {
                 array: {
                 type: Scratch.ArgumentType.STRING,
@@ -1699,9 +1700,9 @@ loopArrayIndex(args)
 {
 const array = JSON.parse(args['array'])
 const max = array.length;
-const item = array[(args['index'] % max || max) - 1];
+const item = Cast.toString(array[(args['index'] % max || max) - 1]);
 
-return Cast.toString(JSON.stringify(item) || item);
+return item;
 }
 
 isNumber(args)
