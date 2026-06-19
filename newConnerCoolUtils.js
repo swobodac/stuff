@@ -1,3 +1,4 @@
+//new stuff
 (function(Scratch) {
   'use strict';
   
@@ -16,6 +17,22 @@ const Cast = Scratch.Cast;
     function toObj(x) { return getDogeiscutObject().Type.toObject(x) }
     function toArr(x) { return getJwArray().Type.toArray(x) }
     function makeArr(a) { return new (getJwArray().Type)(a) }
+
+  let legacyDeltaTime = 0;
+  let previousPerformanceTime = 0;
+
+  vm.runtime.on("BEFORE_EXECUTE", () => {
+    const currentPerformanceTime = performance.now();
+
+    if (previousPerformanceTime === 0) {
+      legacyDeltaTime = 1 / vm.runtime.frameLoop.framerate;
+    } else {
+      legacyDeltaTime = (currentPerformanceTime - previousPerformanceTime) / 1000;
+    }
+
+    previousPerformanceTime = currentPerformanceTime;
+  });
+
   class newConnerCoolUtils {
 
   constructor() {
@@ -195,6 +212,35 @@ const Cast = Scratch.Cast;
 
           },
 
+ {
+            opcode: 'interpolateDirectionNearX',
+            text: 'interpolate direction [currentDirection] to [targetDirection] based of accelerated x [acceleratedX] going to [targetX] using speed [speed]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+            arguments: {
+        currentDirection: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 90,
+        },
+        targetDirection: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 90,
+        },
+                acceleratedX: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+                targetX: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0,
+        },
+                speed: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 0.5,
+        }
+    }
+          },
+
                             {
             opcode: 'makeResizeable',
             text: 'get [value] resized via [size]',
@@ -237,38 +283,6 @@ const Cast = Scratch.Cast;
           },
 
                                       {
-            opcode: 'aElseB',
-            text: 'if [value1] is blank then [value2]',
-            blockType: Scratch.BlockType.REPORTER,
-            disableMonitor: true,
-	    allowDropAnywhere: true,
-      arguments: {
-                value1: {
-                type: Scratch.ArgumentType.STRING,
-                defaultValue: 'foo',
-        },
-                value2: {
-                type: Scratch.ArgumentType.STRING,
-                defaultValue: 'bar',
-        },
-      }
-
-          },
-  
-                            {
-            opcode: 'isEven',
-            text: 'is [value] an even number',
-            blockType: Scratch.BlockType.BOOLEAN,
-            disableMonitor: true,
-      arguments: {
-                value: {
-                type: Scratch.ArgumentType.NUMBER,
-                defaultValue: 2,
-        }
-      }
-
-          },
-                            {
             opcode: 'betweenValue',
             text: 'is number [value] between [min] & [max]',
             blockType: Scratch.BlockType.BOOLEAN,
@@ -290,6 +304,35 @@ const Cast = Scratch.Cast;
       }
 
           },
+  
+                            {
+            opcode: 'isEven',
+            text: 'is [value] an even number',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: true,
+      arguments: {
+                value: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 2,
+        }
+      }
+
+          },
+
+                                      {
+            opcode: 'isNumber',
+            text: 'is [value] a number',
+            blockType: Scratch.BlockType.BOOLEAN,
+            disableMonitor: true,
+      arguments: {
+                value: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: '1',
+        }
+      }
+
+          },
+
                             {
             opcode: 'pi',
             text: 'π (PI)',
@@ -468,7 +511,7 @@ const Cast = Scratch.Cast;
 
                                                     {
             opcode: 'setStageSize',
-            text: 'set stage size to width [width] & [height]',
+            text: 'set stage size to width [width] & height [height]',
             blockType: Scratch.BlockType.COMMAND,
             disableMonitor: true,
 	    allowDropAnywhere: true,
@@ -555,7 +598,7 @@ const Cast = Scratch.Cast;
       }
           },
 
-                                                    {
+        {
             opcode: 'getSpriteName',
             text: 'get sprite name [withWithoutMenu] folder name',
             blockType: Scratch.BlockType.REPORTER,
@@ -570,9 +613,33 @@ const Cast = Scratch.Cast;
 
           },
 
-                                                    {
+        {
             opcode: 'deltaTime',
             text: 'get delta time',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+	    allowDropAnywhere: false,
+          },
+
+        {
+            opcode: 'getLegacyDeltaTime',
+            text: 'get legacy delta time',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+	    allowDropAnywhere: false,
+          },
+
+        {
+            opcode: 'fps',
+            text: 'get framerate',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: false,
+	    allowDropAnywhere: false,
+          },
+
+        {
+            opcode: 'maxFps',
+            text: 'get maximum framerate',
             blockType: Scratch.BlockType.REPORTER,
             disableMonitor: false,
 	    allowDropAnywhere: false,
@@ -809,6 +876,108 @@ const Cast = Scratch.Cast;
     }
           },
 
+                                                  {   
+        blockType: Scratch.BlockType.LABEL,
+        hideFromPalette: false,
+        text: `Miscellaneous`,
+    },
+
+                                          {
+            opcode: 'aElseB',
+            text: 'if [value1] is blank then [value2]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+	    allowDropAnywhere: true,
+      arguments: {
+                value1: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'foo',
+        },
+                value2: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'bar',
+        },
+      }
+
+          },
+
+                                      {
+            opcode: 'ifTrueThen',
+            text: 'if [boolean] then [value]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+	    allowDropAnywhere: true,
+      arguments: {
+                boolean: {
+                type: Scratch.ArgumentType.BOOLEAN
+        },
+                value: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'foo bar',
+        },
+      }
+          },
+
+                                                {
+            opcode: 'joinIfTrue',
+            text: 'if [boolean] then join [string] with [joinString]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+	    allowDropAnywhere: true,
+      arguments: {
+                boolean: {
+                type: Scratch.ArgumentType.BOOLEAN
+        },
+                string: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'foo',
+        },
+                joinString: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'bar',
+        }
+      }
+          },
+
+                                          {
+            opcode: 'getKeyfromObjectFromArray',
+            text: 'get key from object [object] that has array with [value]',
+            blockType: Scratch.BlockType.REPORTER,
+            disableMonitor: true,
+	    allowDropAnywhere: true,
+      arguments: {
+                object: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: '{"foo":["foo","bar"]}',
+        },
+                value: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: 'bar',
+        },
+      }
+
+          },
+
+                                                    {
+            opcode: 'loopArrayIndex',
+            text: 'get item [index] of looped array [array]',
+            blockType: Scratch.BlockType.REPORTER,
+            blockShape: Scratch.BlockShape.SQUARE,
+            disableMonitor: true,
+	    allowDropAnywhere: true,
+      arguments: {
+                array: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: '["foo","bar"]',
+        },
+                index: {
+                type: Scratch.ArgumentType.NUMBER,
+                defaultValue: 1,
+        },
+      }
+
+          },
+
                                         {   
         blockType: Scratch.BlockType.LABEL,
         hideFromPalette: false,
@@ -971,7 +1140,7 @@ blockShape: Scratch.BlockShape.PLUS,
           runtimeSettings: {
             acceptReporters: true,
             items: ["turbo mode", "high quality pen", "offscreen sprites", "remove miscellaneous limits", "disable offscreen rendering", "disable direction clamping", "interpolation", "warp timer"]
-          },
+          }
         }
 
       };
@@ -1428,7 +1597,7 @@ vm.setStageSize(Math.max(1, args['width']), Math.max(1, args['height']));
 
 jsAlert(args)
 {
-alert(args['message'])
+alert(args['message'] || '')
 }
 
 deltaTime()
@@ -1436,16 +1605,36 @@ deltaTime()
 let now = Date.now();
 let dt = now - this.lastUpdate;
 this.lastUpdate = now;
-return dt;
+return dt || 0;
+}
+
+getLegacyDeltaTime()
+{
+return legacyDeltaTime || 0;
+}
+
+fps()
+{
+const runtime = Scratch.vm.runtime;
+const fps = +(1 / legacyDeltaTime);
+
+return  Math.floor(Math.min(Math.max(fps, 0), runtime.frameLoop.framerate)) || 0;
+}
+
+maxFps()
+{
+const runtime = Scratch.vm.runtime;
+
+return runtime.frameLoop.framerate || 0;
 }
 
 getLastKeyPressed ({}, util) {
-return util.ioQuery('keyboard', 'getLastKeyPressed');
+return util.ioQuery('keyboard', 'getLastKeyPressed') || '';
 }
 
 getLoopIDForPhase(args)
 {
-return (args['loopID'] + ((args['phaseID'] - 1) * args['loopAmount'])) ;
+return (args['loopID'] + ((args['phaseID'] - 1) * args['loopAmount'])) || 0;
 }
 
 cubeEngineLoopProgress(args)
@@ -1460,6 +1649,63 @@ loopProgress(args)
 const progress =  (args['timer'] / args['loopLength']) * 100;
 
 return  Math.min(Math.max(progress, 0), 100);
+}
+
+ifTrueThen(args)
+{
+if (args['boolean'])
+{
+return args['value'] || 'false';
+}
+else
+{
+return 'false';
+}
+}
+
+interpolateDirectionNearX(args)
+{
+return (args["currentDirection"] + ((args["targetDirection"] - args["currentDirection"]) * args["speed"])) + ((args["acceleratedX"] - args["targetX"]) /-8 || 0)
+}
+
+joinIfTrue(args)
+{
+if (args['boolean'])
+{
+return args['string'] + args['joinString'];
+}
+else
+{
+return args['string'];
+}
+}
+
+getKeyfromObjectFromArray(args)
+{
+let foundKey = '';
+const object = JSON.parse(args['object']);
+
+Object.entries(object).forEach(([key, value]) => {
+if (value.includes(args['value']))
+{
+foundKey = key;
+}
+});
+
+return foundKey;
+}
+
+loopArrayIndex(args)
+{
+const array = JSON.parse(args['array'])
+const max = array.length;
+
+return array[(args['index'] % max || max) - 1];
+}
+
+isNumber(args)
+{
+return !isNaN(args['value']) && !isNaN(parseFloat(args['value']));
 }
 
 }Scratch.extensions.register(new newConnerCoolUtils());
