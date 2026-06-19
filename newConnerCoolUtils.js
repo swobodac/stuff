@@ -1,4 +1,4 @@
-//itty bitty bug fix
+//another itty bitty bug fix
 (function(Scratch) {
   'use strict';
   
@@ -1701,7 +1701,7 @@ const array = JSON.parse(args['array'])
 const max = array.length;
 const item = array[(args['index'] % max || max) - 1];
 
-return JSON.stringify(item) || item;
+return Cast.toString(JSON.stringify(item) || item);
 }
 
 isNumber(args)
