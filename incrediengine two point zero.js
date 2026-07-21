@@ -1,4 +1,4 @@
-//small update
+//bug fix
 (async function(Scratch) {
     'use strict'
 
