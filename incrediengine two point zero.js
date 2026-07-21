@@ -1,4 +1,4 @@
-//bug fix
+//bug fix hopefully 
 (async function(Scratch) {
     'use strict'
 
@@ -1613,7 +1613,7 @@
 
         clearAllCharactersFromSlots() {
         let data = {};
-            for (const char of this.getAllPlacedCharacterIDs()) {
+            for (const char of JSON.parse(this.getAllPlacedCharacterIDs())) {
                 data = this.findCharacterWithoutPageInput(char)
                 if (!data.slot) continue
                 const slot = this.slots.get(data.slot)
