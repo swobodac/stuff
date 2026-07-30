@@ -1,4 +1,4 @@
-//bug fix hopefully 
+//tiny update
 (async function(Scratch) {
     'use strict'
 
@@ -61,6 +61,7 @@
 
 
             this.characters = new Map()
+            this.characterInPage = new Map()
             this.slots = new Map()
             this.loops = new Map()
             this.categories = new Set(['beats', 'effects', 'melodies', 'voices', 'bonuses'])
@@ -1093,7 +1094,7 @@
                     },
                     INTERNAL_MAP_MENU: {
                     acceptReporters: true,
-                    items: ['characters', 'slots', 'loops']
+                    items: ['characters', 'slots', 'loops', 'characters in page']
                     }
                 }
             }
@@ -1114,43 +1115,25 @@
         for (let categoryName of [...this.categories]) {
         categoriesList.push(categoryName)
         }
+
+        categoriesList = categoriesList.filter(item => item !== 'none')
         return ['none', ...categoriesList];
         }
 
         categoryReporter({
             CATEGORY
         }) {
-            return Cast.toString(CATEGORY)
-        }
-
-        findCharacterWithoutPageInput(ID)
-        {
-        const search = ID;
-        let returnValue = {};
-        this.characters.forEach((value, key, set) => {
-        if (Object.keys(value).includes(search))
-            { 
-            returnValue = (value[search]);
-            }
-        });
-        if (Object.keys(returnValue).length > 0)
-        {
-        return returnValue;
-        }
-        else
-        {
-        return;
-        }
+            return CATEGORY
         }
 
         findAssignedIDForSprite(SPRITE)
         {
         let filter = [];
         let id = '';
-        this.characters.forEach((value, key, set) => {
-        filter = ([Object.values(set.get(key))])[0].filter(c => c.assignedSprite === SPRITE).map(c => c.id)
+
+        filter = [Object.values(this.characters)].filter(c => c.assignedSprite === SPRITE).map(c => c.id)
         if (filter.length > 0) id = filter[0];
-        });
+
         return id;
         }
 
@@ -1162,11 +1145,11 @@
             PAGE
         }) {
             return toObj({
-                id: Cast.toString(ID),
-                category: Cast.toString(CATEGORY),
-                order: Cast.toNumber(ORDER),
-                maxVolume: Cast.toNumber(VOLUME),
-                page: Cast.toString(PAGE)
+                id: ID,
+                category: CATEGORY,
+                order: ORDER,
+                maxVolume: VOLUME,
+                page: PAGE
             })
         }
 
@@ -1176,16 +1159,16 @@
         }) {
             let def
             try {
-                def = JSON.parse(Cast.toString(CHAR))
+                def = JSON.parse(CHAR)
             } catch {
                 return
             }
             if (typeof def !== 'object' || !def.id) return
 
-            const id = Cast.toString(def.id)
-            const category = Cast.toString(def.category ?? 'beats')
-            const volume = Cast.toNumber(def.maxVolume ?? 100)
-            const page = Cast.toString(def.page ?? 'page1')
+            const id = def.id
+            const category = def.category ?? 'none'
+            const volume = def.maxVolume ?? 100
+            const page = def.page ?? 'page1'
 
             this.categories.add(category)
 
@@ -1195,11 +1178,11 @@
             for (const [k, v] of Object.entries(def)) {
                 if (!known.has(k)) customProps[k] = v
             }
-                const registerData =
-                {
+
+            this.characters.set(id, {
                 id,
                 category,
-                order: Cast.toNumber(def.order ?? 1),
+                order: def.order ?? 1,
                 page,
                 currentVolume: 100,
                 maxVolume: volume,
@@ -1208,24 +1191,17 @@
                 muted: false,
                 soloed: false,
                 previousMuteState: false,
+                assignedSprite: '',
                 customProps
-                }
-
-
-                const currentCharacters = this.characters.get(page) || {};
-
-                this.characters.set(page, {
-                ...currentCharacters,
-                [id]: [registerData][0]
                 });
+            this.characterInPage.set(id, page)
         }
 
         deleteCharacter({
             ID
         }) {
-            ID = Cast.toString(ID)
 
-            const char = this.findCharacterWithoutPageInput(ID)
+            const char = this.characters.get(ID)
 
             if (!char) return; 
 
@@ -1234,20 +1210,16 @@
                 if (slot) slot.occupant = null
             }
 
-            const usePage = Cast.toString(char.page);
+            this.characters.delete(ID)
 
-        const currentCharacters = (this.characters.get(usePage));
-            
-            delete currentCharacters[ID];
-
-            this.characters.set(usePage, currentCharacters)
+            this.characterInPage.delete(ID)
 
         }
 
         characterExists({
             ID
         }) {
-            return Boolean(Object.keys(this.findCharacterWithoutPageInput(ID) || {}).length > 0)
+            return this.characters.has(ID)
         }
 
         getCharacterProperty({
@@ -1260,11 +1232,11 @@
             try {
              char = JSON.parse(ID);
             } catch (e) {
-            char = this.findCharacterWithoutPageInput(Cast.toString(ID))
+            char = this.characters.get(ID)
             }
             
             if (!char) return ''
-            switch (Cast.toString(PROPERTY)) {
+            switch (PROPERTY) {
                 case 'id':
                     return char.id
                 case 'category':
@@ -1301,10 +1273,9 @@
             ID,
             VALUE
         }) {
-            const char = this.findCharacterWithoutPageInput(Cast.toString(ID))
+            const char = this.characters.get(ID)
             if (!char) return
-            VALUE = Cast.toNumber(VALUE)
-            switch (Cast.toString(PROPERTY)) {
+            switch (PROPERTY) {
                 case 'current volume':
                     char.currentVolume = Math.max(0, Math.min(VALUE, 100));
                     break
@@ -1322,24 +1293,24 @@
             ID,
             VALUE
         }) {
-            const char = this.findCharacterWithoutPageInput(Cast.toString(ID))
+            const char = this.characters.get(ID)
             if (!char) return
-            char.customProps[Cast.toString(KEY)] = VALUE
+            char.customProps[KEY] = VALUE
         }
 
         getCharacterCustomProp({
             KEY,
             ID
         }) {
-            const char = this.findCharacterWithoutPageInput(Cast.toString(ID))
+            const char = this.characters.get(ID)
             if (!char) return ''
-            return char.customProps[Cast.toString(KEY)] ?? ''
+            return char.customProps[KEY] ?? ''
         }
 
         getCharacterAsObject({
             ID
         }) {
-            const char = this.findCharacterWithoutPageInput(Cast.toString(ID))
+            const char = this.characters.get(ID)
             if (!char) return getDogeiscutObject().Type.blank
 
             const plain = {
@@ -1355,16 +1326,9 @@
             ACTION,
             ID
         }) {
-            const char = this.findCharacterWithoutPageInput(Cast.toString(ID))
+            const char = this.characters.get(ID)
             if (!char) return
-            if (Cast.toString(ACTION) === 'toggle muting for')
-            {
-            char.muted = !char.muted;
-            }
-            else
-            {
-            char.muted = Cast.toString(ACTION) === 'mute';
-            }
+            char.muted = (ACTION === 'toggle muting for') ? !char.muted : ACTION === 'mute';
         }
 
         soloCharacter({
@@ -1372,25 +1336,20 @@
             ID,
             UNSOLO_MODE
         }) {
-            ID = Cast.toString(ID)
-            const char = this.findCharacterWithoutPageInput(ID)
+            const char = this.characters.get(ID)
 
             if (!char) return
-
-            ACTION = Cast.toString(ACTION)
-
-            UNSOLO_MODE = Cast.toString(UNSOLO_MODE)
 
             let data = {};
 
             if (ACTION === 'solo') {
 
                 if (this.soloedCharacter && this.soloedCharacter !== ID) {
-                    const prev = this.findCharacterWithoutPageInput(this.soloedCharacter)
+                    const prev = this.characters.get(this.soloedCharacter)
                     if (prev) prev.soloed = false
                 }
                 for (const c of JSON.parse(this.getAllPlacedCharacterIDs())) {
-                    data = this.findCharacterWithoutPageInput(c)
+                    data = this.characters.get(c)
                     data.previousMuteState = data.muted
                     data.muted = c !== ID
                 }
@@ -1400,13 +1359,13 @@
             } else {
                 if (UNSOLO_MODE === 'unmute all') {
                     for (const c of JSON.parse(this.getAllPlacedCharacterIDs())) {
-                        data = this.findCharacterWithoutPageInput(c);
+                        data = this.characters.get(c);
                         data.muted = false;
                         data.soloed = false
                     }
                 } else {
                     for (const c of JSON.parse(this.getAllPlacedCharacterIDs())) {
-                        data = this.findCharacterWithoutPageInput(c);
+                        data = this.characters.get(c);
                         data.muted = data.previousMuteState;
                         data.soloed = false
                     }
@@ -1423,11 +1382,10 @@
             CATEGORY,
             PAGE
         }) {
-            CATEGORY = Cast.toString(CATEGORY)
-            PAGE = Cast.toString(PAGE)
+
             let arr = [];
             try {
-            arr = [...Object.values(this.characters.get(PAGE))].filter(c => c.category === CATEGORY).map(c => c.id)
+            arr = ([...this.characters.values()].filter(c => c.category === CATEGORY && c.page === PAGE).map(c => c.id))
             }
             catch (e)
             {
@@ -1440,12 +1398,11 @@
             CATEGORY,
             PAGE
         }) {
-            CATEGORY = Cast.toString(CATEGORY)
-            PAGE = Cast.toString(PAGE)
+
             let arr = [];
             try {
-            arr = [...Object.values(this.characters.get(PAGE))]
-                .filter(c => c.category === CATEGORY)
+            arr = [...this.characters.values()]
+                .filter(c => c.category === CATEGORY && c.page === PAGE)
                 .sort((a, b) => a.order - b.order)
                 .map(c => c.id)
             }
@@ -1458,10 +1415,10 @@
 
         getAllCharacterIDs({PAGE}) {
             let arr = [];
-            PAGE = Cast.toString(PAGE)
+
             try
             {
-            arr = [...Object.keys(this.characters.get(PAGE))]
+            arr = ([...this.characters.values()].filter(c => c.page === PAGE).map(c => c.id))
             }
             catch (e)
             {
@@ -1471,18 +1428,7 @@
         }
 
             getAllCharacterIDsFromAllPages() {
-            let arr = [];
-            try
-            {
-        this.characters.forEach((value, key, set) => {
-            arr.push(...Object.keys(value));
-        });
-            }
-            catch (e)
-            {
-            alert(e)
-            }
-            return makeArr(arr);
+            return makeArr([...this.characters.values()].map(c => c.id));
         }
 
         getAllPlacedCharacterIDs() {
@@ -1497,7 +1443,7 @@
         registerSlot({
             ID
         }) {
-            ID = Cast.toString(ID)
+
             if (!this.slots.has(ID)) this.slots.set(ID, {
                 id: ID,
                 occupant: null,
@@ -1508,7 +1454,7 @@
         deleteSlot({
             ID
         }) {
-            ID = Cast.toString(ID)
+
             const slot = this.slots.get(ID)
             if (!slot || slot.occupant) return
             this.slots.delete(ID)
@@ -1518,9 +1464,8 @@
             CHARACTER,
             SLOT
         }) {
-            CHARACTER = Cast.toString(CHARACTER)
-            SLOT = Cast.toString(SLOT)
-            const char = this.findCharacterWithoutPageInput(CHARACTER)
+
+            const char = this.characters.get(CHARACTER)
             if (!char) return
 
 
@@ -1548,14 +1493,13 @@
             SLOT,
             CHARACTER
         }) {
-            SLOT = Cast.toString(SLOT)
-            CHARACTER = Cast.toString(CHARACTER)
+
             const slot = this.slots.get(SLOT)
-            const newChar = this.findCharacterWithoutPageInput(CHARACTER)
+            const newChar = this.characters.get(CHARACTER)
             if (!slot || !newChar) return
 
             if (slot.occupant) {
-                const oldChar =this.findCharacterWithoutPageInput(slot.occupant)
+                const oldChar =this.characters.get(slot.occupant)
                 if (oldChar) {
                     oldChar.slot = null
                     oldChar.wasOnSlot = SLOT
@@ -1577,8 +1521,8 @@
         clearCharacterFromSlots({
             CHARACTER
         }) {
-            CHARACTER = Cast.toString(CHARACTER)
-            const char = this.findCharacterWithoutPageInput(CHARACTER)
+
+            const char = this.characters.get(CHARACTER)
             if (!char?.slot) return
             const slot = this.slots.get(char.slot)
             if (slot) slot.occupant = null
@@ -1594,10 +1538,10 @@
         clearSlotOccupant({
             SLOT
         }) {
-            SLOT = Cast.toString(SLOT)
+
             const slot = this.slots.get(SLOT)
             if (!slot?.occupant) return
-            const char = this.findCharacterWithoutPageInput(slot.occupant)
+            const char = this.characters.get(slot.occupant)
             if (char) {
                 const wasOnSlot = char.slot
                 char.slot = null
@@ -1613,8 +1557,8 @@
 
         clearAllCharactersFromSlots() {
         let data = {};
-            for (const char of JSON.parse(this.getAllPlacedCharacterIDs())) {
-                data = this.findCharacterWithoutPageInput(char)
+            for (const char of this.getAllPlacedCharacterIDs()) {
+                data = this.characters.get(char)
                 if (!data.slot) continue
                 const slot = this.slots.get(data.slot)
                 if (slot) slot.occupant = null
@@ -1632,14 +1576,14 @@
         slotIsOccupied({
             SLOT
         }) {
-            const slot = this.slots.get(Cast.toString(SLOT))
+            const slot = this.slots.get(SLOT)
             return !!(slot?.occupant)
         }
 
         getSlotOccupant({
             SLOT
         }) {
-            return this.slots.get(Cast.toString(SLOT))?.occupant ?? ''
+            return this.slots.get(SLOT)?.occupant ?? ''
         }
 
         setSlotCustomProp({
@@ -1647,24 +1591,24 @@
             SLOT,
             VALUE
         }) {
-            const slot = this.slots.get(Cast.toString(SLOT))
+            const slot = this.slots.get(SLOT)
             if (!slot) return
-            slot.customProps[Cast.toString(KEY)] = VALUE
+            slot.customProps[KEY] = VALUE
         }
 
         getSlotCustomProp({
             KEY,
             SLOT
         }) {
-            const slot = this.slots.get(Cast.toString(SLOT))
+            const slot = this.slots.get(SLOT)
             if (!slot) return ''
-            return slot.customProps[Cast.toString(KEY)] ?? ''
+            return slot.customProps[KEY] ?? ''
         }
 
         getSlotAsObject({
             SLOT
         }) {
-            const slot = this.slots.get(Cast.toString(SLOT))
+            const slot = this.slots.get(SLOT)
             if (!slot) return getDogeiscutObject().Type.blank
             const plain = {
                 id: slot.id,
@@ -1690,14 +1634,14 @@
         registerCategory({
             CATEGORY
         }) {
-            if (Cast.toString(CATEGORY) === 'none') return;
-            this.categories.add(Cast.toString(CATEGORY))
+            if (CATEGORY === 'none') return;
+            this.categories.add(CATEGORY)
         }
 
         deleteCategory({
             CATEGORY
         }) {
-            CATEGORY = Cast.toString(CATEGORY)
+
             const inUse = [...this.characters.values()].some(c => c.category === CATEGORY)
             if (!inUse) this.categories.delete(CATEGORY)
         }
@@ -1705,7 +1649,7 @@
         categoryExists({
             CATEGORY
         }) {
-            return this.categories.has(Cast.toString(CATEGORY))
+            return this.categories.has(CATEGORY)
         }
 
         getAllCategories() {
@@ -1719,7 +1663,7 @@
 
             if (raw && typeof raw === 'object') return raw
             try {
-                return JSON.parse(Cast.toString(raw))
+                return JSON.parse(raw)
             } catch {
                 return null
             }
@@ -1731,16 +1675,16 @@
             BARS,
             BPB
         }) {
-            const totalBeats =  Cast.toNumber(BARS) * Cast.toNumber(BPB)
-            const lengthSec = (totalBeats * 60) / (Cast.toNumber(BPM) || 120)
+            const totalBeats =  BARS * BPB
+            const lengthSec = (totalBeats * 60) / BPM
             const data = {
-                id: Cast.toString(ID),
-                bpm: Cast.toNumber(BPM),
-                bars: Cast.toNumber(BARS),
-                beatsPerBar: Cast.toNumber(BPB),
+                id: ID,
+                bpm: BPM,
+                bars: BARS,
+                beatsPerBar: BPB,
                 lengthInBeats: totalBeats,
                 lengthInSeconds: parseFloat(lengthSec.toFixed(3)),
-                lengthPerBeat: lengthSec / (Cast.toNumber(BARS) * Cast.toNumber(BPB))
+                lengthPerBeat: lengthSec / BARS * BPB
             }
             this.loops.set(data.id, data)
             return toObj(data)
@@ -1750,9 +1694,9 @@
             PROPERTY,
             LOOP
         }) {
-            const data = this._parseLoop(Cast.toString(LOOP))
+            const data = this._parseLoop(LOOP)
             if (!data) return ''
-            switch (Cast.toString(PROPERTY)) {
+            switch (PROPERTY) {
                 case 'id':
                     return data.id ?? ''
                 case 'bpm':
@@ -1777,7 +1721,7 @@
         startLoop({
             LOOP
         }) {
-            const data = this._parseLoop(Cast.toString(LOOP))
+            const data = this._parseLoop(LOOP)
             if (!data) return
             this._startLoopInternal(data)
         }
@@ -1785,7 +1729,7 @@
         startLoopAndWait({
             LOOP
         }) {
-            const data = this._parseLoop(Cast.toString(LOOP))
+            const data = this._parseLoop(LOOP)
             if (!data) return
             this._startLoopInternal(data)
             const totalBeats = data.bars * data.beatsPerBar
@@ -1807,7 +1751,7 @@
             let charData = {};
 
             for (const c of JSON.parse(this.getAllPlacedCharacterIDs())) {
-            charData = this.findCharacterWithoutPageInput(c)
+            charData = this.characters.get(c)
             charData.singing = true;
             }
 
@@ -1982,12 +1926,9 @@
             ID
         }) {
         
-        const char = this.findCharacterWithoutPageInput(Cast.toString(ID))
+        const char = this.characters.get(ID)
+
         if (!char) return;
-
-        SPRITE = Cast.toString(SPRITE);
-
-        MENU = Cast.toString(MENU);
 
         if (SPRITE === "no sprites found") return;
         
@@ -2001,7 +1942,7 @@
         }
         }
 
-        getAssiginedIDFromThisSprite(args, util)
+        getAssiginedIDFromThisSprite({}, util)
         {
         let spriteName = util.target.getName();
 
@@ -2012,7 +1953,7 @@
         SPRITE
         }){
             
-        SPRITE = Cast.toString(SPRITE);
+
         if (SPRITE === "no sprites found") return;
 
         return this.findAssignedIDForSprite(SPRITE);
@@ -2021,7 +1962,7 @@
         getInternalMap({
         MENU
         }){
-        MENU =  (Cast.toString(MENU))
+        MENU =  (MENU)
         switch(MENU)
         {
         case 'characters':
@@ -2033,6 +1974,9 @@
         case 'loops':
         return toObj(this.loops);
 
+        case 'characters in page':
+        return toObj(this.characterInPage)
+
         default:
         return '';
         }
@@ -2043,7 +1987,7 @@
         }) {
             const data = this._parseLoop(this.currentLoop)
             if (!data) return ''
-            switch (Cast.toString(PROPERTY)) {
+            switch (PROPERTY) {
                 case 'id':
                     return data.id ?? ''
                 case 'bpm':
