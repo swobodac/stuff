@@ -1981,7 +1981,7 @@
         getFromCurrentLoop({
             PROPERTY
         }) {
-            const data = this._parseLoop(Cast.toString(this.currentLoop))
+            const data = this.currentLoop
             if (!data) return ''
             switch (PROPERTY) {
                 case 'id':
