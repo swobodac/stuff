@@ -1,4 +1,3 @@
-//FUCKKK some things broke but i fixed them...
 (async function(Scratch) {
     'use strict'
 
@@ -168,7 +167,7 @@
 
             this._updateLoopTime()
 
-            const data = JSON.parse(this.currentLoop)
+            const data = this.currentLoop
             const secondsPerBeat = 60 / data.bpm
             const totalBeats = data.bars * data.beatsPerBar
             const totalSeconds = secondsPerBeat * totalBeats
@@ -1744,7 +1743,7 @@
 
         _startLoopInternal(data) {
             const ctx = this._getAudioCtx()
-            this.currentLoop = data
+            this.currentLoop = JSON.parse(data)
             let charData = {};
 
             for (const c of JSON.parse(this.getAllPlacedCharacterIDs())) {
