@@ -1,4 +1,4 @@
-//tiny update
+//FUCKKK some things broke...
 (async function(Scratch) {
     'use strict'
 
@@ -1129,12 +1129,9 @@
         findAssignedIDForSprite(SPRITE)
         {
         let filter = [];
-        let id = '';
 
-        filter = [Object.values(this.characters)].filter(c => c.assignedSprite === SPRITE).map(c => c.id)
-        if (filter.length > 0) id = filter[0];
-
-        return id;
+        filter = [...this.characters.values()].filter(c => c.assignedSprite === SPRITE).map(c => c.id)
+        return (filter.length > 0) ? filter[0] : '';
         }
 
         newCharacter({
@@ -1295,7 +1292,7 @@
         }) {
             const char = this.characters.get(ID)
             if (!char) return
-            char.customProps[KEY] = VALUE
+            char.customProps[Cast.toString(KEY)] = VALUE
         }
 
         getCharacterCustomProp({
@@ -1304,7 +1301,7 @@
         }) {
             const char = this.characters.get(ID)
             if (!char) return ''
-            return char.customProps[KEY] ?? ''
+            return char.customProps[Cast.toString(KEY)] ?? ''
         }
 
         getCharacterAsObject({
@@ -1593,7 +1590,7 @@
         }) {
             const slot = this.slots.get(SLOT)
             if (!slot) return
-            slot.customProps[KEY] = VALUE
+            slot.customProps[Cast.toString(KEY)] = VALUE
         }
 
         getSlotCustomProp({
@@ -1602,7 +1599,7 @@
         }) {
             const slot = this.slots.get(SLOT)
             if (!slot) return ''
-            return slot.customProps[KEY] ?? ''
+            return slot.customProps[Cast.toString(KEY)] ?? ''
         }
 
         getSlotAsObject({
@@ -1663,7 +1660,7 @@
 
             if (raw && typeof raw === 'object') return raw
             try {
-                return JSON.parse(raw)
+                return JSON.parse(Cast.toString(raw))
             } catch {
                 return null
             }
@@ -1684,7 +1681,7 @@
                 beatsPerBar: BPB,
                 lengthInBeats: totalBeats,
                 lengthInSeconds: parseFloat(lengthSec.toFixed(3)),
-                lengthPerBeat: lengthSec / BARS * BPB
+                lengthPerBeat: lengthSec / totalBeats
             }
             this.loops.set(data.id, data)
             return toObj(data)
@@ -1694,7 +1691,7 @@
             PROPERTY,
             LOOP
         }) {
-            const data = this._parseLoop(LOOP)
+            const data = this._parseLoop(Cast.toString(LOOP))
             if (!data) return ''
             switch (PROPERTY) {
                 case 'id':
@@ -1985,7 +1982,7 @@
         getFromCurrentLoop({
             PROPERTY
         }) {
-            const data = this._parseLoop(this.currentLoop)
+            const data = this._parseLoop(Cast.toString(this.currentLoop))
             if (!data) return ''
             switch (PROPERTY) {
                 case 'id':
