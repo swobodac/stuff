@@ -1,4 +1,4 @@
-//FUCKKK some things broke...
+//FUCKKK some things broke but i fixed them...
 (async function(Scratch) {
     'use strict'
 
@@ -168,8 +168,8 @@
 
             this._updateLoopTime()
 
-            const data = this.currentLoop
-            const secondsPerBeat = 60 / (data.bpm || 120)
+            const data = JSON.parse(this.currentLoop)
+            const secondsPerBeat = 60 / data.bpm
             const totalBeats = data.bars * data.beatsPerBar
             const totalSeconds = secondsPerBeat * totalBeats
             const elapsed = this._getLoopElapsedSeconds()
