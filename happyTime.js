@@ -1,3 +1,3 @@
 (async () => {
-console.log('cool'l
+console.log('cool')
 })();
